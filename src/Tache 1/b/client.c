@@ -30,12 +30,14 @@ int envoie_recois_message(int socketfd)
 
 
   // Demandez à l'utilisateur d'entrer un message
-  char message[100];
+  char message[1024];
   printf("Votre message (max 1000 caracteres): ");
   fgets(message, 1024, stdin);
-  //strcpy(data, "message: ");
-  //strcat(data, message);
+
+  // Préparation du buffer avec le type de message
+  envoi_nom_de_client(data, message);
   
+  // Envoi du buffer avec le message
   int write_status = write(socketfd, data, strlen(data));
   if ( write_status < 0 ) 
   {
@@ -108,7 +110,7 @@ int envoie_couleurs(int socketfd, char *pathname)
   return 0;
 }
 
-int envoi_nom_de_client(char *data[1024], char *message[100])
+int envoi_nom_de_client(char data[1024], char message[1024])
 {
   strcpy(data, "nom: ");
   strcat(data, message);

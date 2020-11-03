@@ -103,15 +103,24 @@ int recois_envoie_message(int socketfd)
   sscanf(data, "%s", code);
 
   //Si le message commence par le mot: 'message:' 
-  if (strcmp(code, "message:") == 0) {
-    renvoie_message(client_socket_fd, data);
+  if (strcmp(code, "nom:") == 0) 
+  {
+    renvoi_nom(client_socket_fd, data);
   }
-  else {
+  else 
+  {
     plot(data);
   }
 
+  
+
   //fermer le socket 
   close(socketfd);
+}
+
+int renvoi_nom(int client_socket_fd, char data[1024])
+{
+  renvoie_message(client_socket_fd, data);
 }
 
 int main() 

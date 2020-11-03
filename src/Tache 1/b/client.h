@@ -21,6 +21,7 @@ int envoie_recois_message(int socketfd);
 
 /*
  * Fonction d'envoi du nom du client
+ * Prend en paramètre: le buffer a envoyer, et le buffer contenant le message
  */ 
-int envoi_nom_de_client(char *data[1024], char *message[100]);
+int envoi_nom_de_client(char data[1024], char message[1024]);
 #endif
