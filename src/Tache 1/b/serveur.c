@@ -102,7 +102,7 @@ int recois_envoie_message(int socketfd)
   char code[10];
   sscanf(data, "%s", code);
 
-  //Si le message commence par le mot: 'message:' 
+  //Si le message commence par le mot: 'nom:' 
   if (strcmp(code, "nom:") == 0) 
   {
     renvoi_nom(client_socket_fd, data);
