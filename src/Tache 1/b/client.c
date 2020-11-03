@@ -33,8 +33,8 @@ int envoie_recois_message(int socketfd)
   char message[100];
   printf("Votre message (max 1000 caracteres): ");
   fgets(message, 1024, stdin);
-  strcpy(data, "message: ");
-  strcat(data, message);
+  //strcpy(data, "message: ");
+  //strcat(data, message);
   
   int write_status = write(socketfd, data, strlen(data));
   if ( write_status < 0 ) 
@@ -104,6 +104,14 @@ int envoie_couleurs(int socketfd, char *pathname)
     perror("erreur ecriture");
     exit(EXIT_FAILURE);
   }
+
+  return 0;
+}
+
+int envoi_nom_de_client(char *data[1024], char *message[100])
+{
+  strcpy(data, "nom: ");
+  strcat(data, message);
 
   return 0;
 }
