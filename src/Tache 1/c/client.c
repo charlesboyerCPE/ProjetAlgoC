@@ -30,11 +30,11 @@ int envoie_recois_message(int socketfd)
 
 
   // Demandez à l'utilisateur d'entrer un message
-  char message[100];
-  printf("Votre message (max 1000 caracteres): ");
+  char message[1024];
+  printf("message : ");
   fgets(message, 1024, stdin);
-  strcpy(data, "message: ");
-  strcat(data, message);
+  //strcpy(data, "message: ");
+  //strcat(data, message);
   
   int write_status = write(socketfd, data, strlen(data));
   if ( write_status < 0 ) 
@@ -60,8 +60,41 @@ int envoie_recois_message(int socketfd)
   return 0;
 }
 
-int envoie_nom_de_client(int socketfd){
+int envoie_operateur_numeros(int socketfd){
+  char data[1024];
+  // la réinitialisation de l'ensemble des données
+  memset(data, 0, sizeof(data));
+
+
+  // Demandez à l'utilisateur d'entrer un message
+  char message[1024];
+  printf("calcule : ");
+  fgets(message, 1024, stdin);
+  strcpy(data, "calcul: ");
+  strcat(data, message);
   
+  int write_status = write(socketfd, data, strlen(data));
+  if ( write_status < 0 ) 
+  {
+    perror("erreur ecriture");
+    exit(EXIT_FAILURE);
+  }
+
+  // la réinitialisation de l'ensemble des données
+  memset(data, 0, sizeof(data));
+
+
+  // lire les données de la socket
+  int read_status = read(socketfd, data, sizeof(data));
+  if ( read_status < 0 ) 
+  {
+    perror("erreur lecture");
+    return -1;
+  }
+
+  printf("Resultat: %s\n", data);
+ 
+  return 0;
 }
 
 void analyse(char *pathname, char *data) 
@@ -112,11 +145,18 @@ int envoie_couleurs(int socketfd, char *pathname)
   return 0;
 }
 
+int envoi_nom_de_client(char data[1024], char message[100])
+{
+  strcpy(data, "nom: ");
+  strcat(data, message);
+
+  return 0;
+}
+
 int main(int argc, char **argv) 
 {
   int socketfd;
   int bind_status;
-  char message_statut[50];
 
   struct sockaddr_in server_addr, client_addr;
 
@@ -144,30 +184,9 @@ int main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-  printf("Quel type de message souhaitez vous envoer : ");
-  scanf("%s", message_statut);
-
-  if(strcmp("nom", message_statut)){
-    printf("%s \n", message_statut);
-  }
-  else if (strcmp("calcul", message_statut))
-  {
-    printf("%s \n", message_statut);
-  }
-  else if(strcmp("couleur", message_statut))
-  {
-    printf("%s \n", message_statut);
-  }
-  else
-  {
-    envoie_couleurs(socketfd, argv[1]);
-  }
-  
-  
-
-  //printf("%i", message_statut);
   //envoie_recois_message(socketfd);
   //envoie_couleurs(socketfd, argv[1]);
+  envoie_operateur_numeros(socketfd);
 
 
   close(socketfd);
