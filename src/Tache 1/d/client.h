@@ -29,5 +29,5 @@ int envoi_nom_de_client(char data[1024], char message[1024]);
  * Fonction d'envoi de la couleur du client
  * Prend en paramètre: le buffer a envoyer, et le buffer contenant le message
  */ 
-int envoi_couleurs();
+int envoie_couleurs(int socketfd, char *pathname);
 #endif

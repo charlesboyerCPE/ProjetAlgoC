@@ -78,7 +78,8 @@ int recois_envoie_message(int socketfd)
  
   // nouvelle connection de client
   int client_socket_fd = accept(socketfd, (struct sockaddr *) &client_addr, &client_addr_len);
-  if (client_socket_fd < 0 ) {
+  if (client_socket_fd < 0 ) 
+  {
     perror("accept");
     return(EXIT_FAILURE);
   }
@@ -89,7 +90,8 @@ int recois_envoie_message(int socketfd)
   //lecture de données envoyées par un client
   int data_size = read (client_socket_fd, (void *) data, sizeof(data));
       
-  if (data_size < 0) {
+  if (data_size < 0) 
+  {
     perror("erreur lecture");
     return(EXIT_FAILURE);
   }
@@ -127,29 +129,31 @@ int renvoi_nom(int client_socket_fd, char data[1024])
 
 int renvoi_couleurs(int client_socket_fd, char data[1024])
 {
-  FILE *saveEnregistrement;
+  FILE *fichierCouleur;
 
   //Ouverture du fichier
-  saveEnregistrement = fopen("enregistrement.txt", "w");
-  if (saveEnregistrement == NULL)
+  fichierCouleur = fopen("saveCouleur.txt", "w");
+  if (fichierCouleur == NULL)
   {
     fprintf(stderr, "Impossible d'ouvrir le fichier\n");
     return -1;
   }
 
   //Enregistrement du buffer dans le fichier
-  if (saveEnregistrement)
+  if (fichierCouleur)
   {
-    fwrite(data, 1, sizeof(&data), saveEnregistrement);
+    fwrite(data, sizeof(char), strlen(data), fichierCouleur);
+    renvoie_message(client_socket_fd, "Couleurs enregistrees.\n");
+    
   }
   else
   {
     printf("Impossible d'ecrire dans le fichier.\n");
+    renvoie_message(client_socket_fd, "Erreur enregistrement.\n");
   }
   
-
   //Fermeture du fichier
-  fclose(saveEnregistrement);
+  fclose(fichierCouleur);
 }
 
 int main() 

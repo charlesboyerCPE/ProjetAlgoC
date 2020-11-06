@@ -97,16 +97,32 @@ void analyse(char *pathname, char *data)
 int envoie_couleurs(int socketfd, char *pathname) 
 {
   char data[1024];
+
+  //Initialisation du tableau
   memset(data, 0, sizeof(data));
+
   analyse(pathname, data);
-  
+
+  //Envoi au serveur des resultats de l'analyse  
   int write_status = write(socketfd, data, strlen(data));
-  if ( write_status < 0 ) 
+  if (write_status < 0)  
   {
-    perror("erreur ecriture");
+    perror("Erreur Ecriture");
     exit(EXIT_FAILURE);
   }
 
+  //On réinitialise le buffer pour y mettre la réponse du serveur
+  memset(data, 0, sizeof(data));
+
+  //Attente de la réponse du serveur
+  int read_status = read(socketfd, data, sizeof(data));
+  if (read_status < 0) 
+  {
+    perror("Erreur Lecture");
+    exit(EXIT_FAILURE);
+  }
+
+  printf("Message Recu: %s", data);
   return 0;
 }
 
@@ -114,26 +130,6 @@ int envoi_nom_de_client(char data[1024], char message[1024])
 {
   strcpy(data, "nom: ");
   strcat(data, message);
-
-  return 0;
-}
-
-int envoi_couleurs(int socketfd, char *pathname)
-{
-  char data[1024];
-  
-  //Initialisation du buffer
-  memset(data, 0, sizeof(data));
-
-  //Analyse de l'image
-  analyse(pathname, data);
-
-  int write_status = write(socketfd, data, strlen(data));
-  if ( write_status < 0 ) 
-  {
-    perror("erreur ecriture");
-    exit(EXIT_FAILURE);
-  }
 
   return 0;
 }
@@ -170,9 +166,7 @@ int main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-  //envoie_recois_message(socketfd);
-  envoi_couleurs(socketfd, argv[1]);
-
+  envoie_couleurs(socketfd, argv[1]);
 
   close(socketfd);
 }
