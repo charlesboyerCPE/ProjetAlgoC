@@ -38,7 +38,7 @@ int envoie_recois_message(int socketfd)
   envoi_nom_de_client(data, message);
   
   // Envoi du buffer avec le message
-  int write_status = write(socketfd, data, strlen(data));
+  int write_status = write(socketfd, data, sizeof(data));
   if ( write_status < 0 ) 
   {
     perror("erreur ecriture");
@@ -57,7 +57,7 @@ int envoie_recois_message(int socketfd)
     return -1;
   }
 
-  printf("Message recu: %s\n", data);
+  printf("Message recu: %s", data);
  
   return 0;
 }
@@ -98,13 +98,13 @@ int envoie_couleurs(int socketfd, char *pathname)
 {
   char data[1024];
 
-  //Initialisation du tableau
+  //Initialisation du buffer
   memset(data, 0, sizeof(data));
 
   analyse(pathname, data);
 
   //Envoi au serveur des resultats de l'analyse  
-  int write_status = write(socketfd, data, strlen(data));
+  int write_status = write(socketfd, data, sizeof(data));
   if (write_status < 0)  
   {
     perror("Erreur Ecriture");
@@ -115,14 +115,14 @@ int envoie_couleurs(int socketfd, char *pathname)
   memset(data, 0, sizeof(data));
 
   //Attente de la réponse du serveur
-  int read_status = read(socketfd, data, strlen(data));
+  int read_status = read(socketfd, data, sizeof(data));
   if (read_status < 0) 
   {
     perror("Erreur Lecture");
     exit(EXIT_FAILURE);
   }
   
-  printf("Message Recu: %s", data);
+  printf("Message Recu: %s\n", data);
   return 0;
 }
 

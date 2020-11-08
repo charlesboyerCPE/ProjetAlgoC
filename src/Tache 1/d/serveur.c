@@ -56,7 +56,8 @@ void plot(char *data)
 
 /* renvoyer un message (*data) au client (client_socket_fd)
  */
-int renvoie_message(int client_socket_fd, char *data) {
+int renvoie_message(int client_socket_fd, char *data) 
+{
   int data_size = write (client_socket_fd, (void *) data, strlen(data));
       
   if (data_size < 0) {
@@ -111,7 +112,7 @@ int recois_envoie_message(int socketfd)
   }
   else if (strcmp(code, "couleurs:") == 0)
   {
-    renvoi_couleurs(client_socket_fd, data);
+    recois_couleurs(client_socket_fd, data);
   }
   else 
   {
@@ -122,12 +123,12 @@ int recois_envoie_message(int socketfd)
   close(socketfd);
 }
 
-int renvoi_nom(int client_socket_fd, char data[1024])
+int renvoi_nom(int client_socket_fd, char *data)
 {
   renvoie_message(client_socket_fd, data);
 }
 
-int renvoi_couleurs(int client_socket_fd, char data[1024])
+int recois_couleurs(int client_socket_fd, char *data)
 {
   FILE *fichierCouleur;
 
@@ -142,16 +143,29 @@ int renvoi_couleurs(int client_socket_fd, char data[1024])
   //Enregistrement du buffer dans le fichier
   if (fichierCouleur)
   {
-    fwrite(data, sizeof(char), strlen(data), fichierCouleur);
-    renvoie_message(client_socket_fd, "Couleurs enregistrees.\n");
-    
+    if (fwrite(data, sizeof(char), strlen(data), fichierCouleur) == 0)
+    {
+      fprintf(stderr, "Erreur dans l'écriture du fichier\n");
+      return -1;
+    }
+    else
+    {
+      memset(data, 0, sizeof(data));
+      data = "Couleurs enregistrees";
+    }
   }
   else
   {
     printf("Impossible d'ecrire dans le fichier.\n");
-    renvoie_message(client_socket_fd, "Erreur enregistrement.\n");
+    
+    memset(data, 0, sizeof(data));
+    data = "Erreur enregistrement couleurs";
   }
   
+  //Envoi de la réponse au client
+  printf("Contenu data: %s\n", data);
+  renvoie_message(client_socket_fd, data);
+
   //Fermeture du fichier
   fclose(fichierCouleur);
 }

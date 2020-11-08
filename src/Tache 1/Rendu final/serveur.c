@@ -46,7 +46,8 @@ void plot(char *data)
     {
       n = atoi(token);
     }
-    else {
+    else 
+    {
       // Le numéro 36, parceque 360° (cercle) / 10 couleurs = 36
       fprintf(p, "0 0 10 %d %d 0x%s\n", (count-1)*36, count*36, token+1);
     }
@@ -67,6 +68,8 @@ int renvoie_message(int client_socket_fd, char *data)
     perror("erreur ecriture");
     return(EXIT_FAILURE);
   }
+
+  return 0;
 }
 
 
@@ -172,6 +175,8 @@ int recois_balises(int socketfd)
 
   //fermer le socket 
   close(socketfd);
+
+  return 0;
 }
 
 int main() 
