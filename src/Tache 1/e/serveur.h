@@ -17,4 +17,6 @@
  */
 int recois_envoie_message(int socketfd);
 
+int recois_balise(int client_socket_fd, char data[1024]);
+
 #endif

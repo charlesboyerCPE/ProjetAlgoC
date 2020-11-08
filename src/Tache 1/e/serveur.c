@@ -65,6 +65,42 @@ int renvoie_message(int client_socket_fd, char *data) {
   }
 }
 
+int recois_balises(int client_socket_fd, char data[1024]){
+
+  int nb_balises;
+  int index = 1;
+  char response[100];
+  char *str = strtok(data, "#");
+
+  FILE *file = fopen("balises.txt", "w");
+
+  if(file == NULL){
+    printf("Impossible d'ouvrir le fichier\n");
+    renvoie_message(client_socket_fd, "Un problème est survenu sur le serveur\n");
+    return -1;
+  }
+
+  if (1 == sscanf(str, "%*[^0-9]%d", &nb_balises)){
+    printf ("Message recu: %s\n", data);
+    str = strtok(NULL, "#");
+    while (str != NULL && index <= nb_balises)
+    {
+      char write[15] = "#";
+      strcpy(response, str);
+      printf("%s", str);
+      response[strlen(response)-1] = '\n';
+      strcat(write, response);
+      fputs(write, file);
+
+      str = strtok(NULL, "#");
+      index++;
+    }
+    
+    renvoie_message(client_socket_fd, "Balises enregistrées"); 
+  }
+  fclose(file);
+}
+
 /* accepter la nouvelle connection d'un client et lire les données
  * envoyées par le client. En suite, le serveur envoie un message
  * en retour
@@ -100,77 +136,21 @@ int recois_envoie_message(int socketfd)
    */
   printf ("Message recu: %s\n", data);
   char code[10];
-  sscanf(data, "%s", code);
+  //sscanf(data, "%s", code);
 
   //Si le message commence par le mot: 'message:' 
-  if (strcmp(code, "balises:") == 0) {
+  recois_balises(client_socket_fd, data);
+  /*if (strcmp(code, "balises:") == 0) {
     renvoie_message(client_socket_fd, data);
   }
   else {
     plot(data);
-  }
+  }*/
 
   //fermer le socket 
   close(socketfd);
 }
 
-int recois_balises(int socketfd){
-  struct sockaddr_in client_addr;
-  char data[1024];
-
-  int client_addr_len = sizeof(client_addr);
- 
-  // nouvelle connection de client
-  int client_socket_fd = accept(socketfd, (struct sockaddr *) &client_addr, &client_addr_len);
-  if (client_socket_fd < 0 ) {
-    perror("accept");
-    return(EXIT_FAILURE);
-  }
-
-  // la réinitialisation de l'ensemble des données
-  memset(data, 0, sizeof(data));
-
-  //lecture de données envoyées par un client
-  int data_size = read (client_socket_fd, (void *) data, sizeof(data));
-      
-  if (data_size < 0) {
-    perror("erreur lecture");
-    return(EXIT_FAILURE);
-  }
-  
-  /*
-   * extraire le code des données envoyées par le client. 
-   * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
-   */
-  int nb_balises;
-  int index = 1;
-  char response[100];
-  char *str = strtok(data, "#");
-  if (1 == sscanf(str, "%*[^0-9]%d", &nb_balises)){
-    printf ("Message recu: %s\n", data);
-    str = strtok(NULL, "#");
-    FILE *file = fopen("balises.txt", "w");
-    while (str != NULL && index <= nb_balises)
-    {
-      char write[15] = "#";
-      strcpy(response, str);
-      printf("%s", str);
-      response[strlen(response)-1] = '\n';
-      strcat(write, response);
-      fputs(write, file);
-
-      str = strtok(NULL, "#");
-      index++;
-    }
-    
-    
-    fclose(file);
-    renvoie_message(client_socket_fd, "Balises enregistrées"); 
-  }
-
-  //fermer le socket 
-  close(socketfd);
-}
 
 int main() 
 {
@@ -212,8 +192,8 @@ int main()
   listen(socketfd, 10);
 
   //Lire et répondre au client
-  //recois_envoie_message(socketfd);
-  recois_balises(socketfd);
+  recois_envoie_message(socketfd);
+  //recois_balises(socketfd);
 
   return 0;
 }
