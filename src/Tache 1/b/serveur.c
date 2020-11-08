@@ -56,7 +56,8 @@ void plot(char *data)
 
 /* renvoyer un message (*data) au client (client_socket_fd)
  */
-int renvoie_message(int client_socket_fd, char *data) {
+int renvoie_message(int client_socket_fd, char *data) 
+{
   int data_size = write (client_socket_fd, (void *) data, strlen(data));
       
   if (data_size < 0) {
@@ -118,7 +119,7 @@ int recois_envoie_message(int socketfd)
   close(socketfd);
 }
 
-int renvoi_nom(int client_socket_fd, char data[1024])
+int renvoi_nom(int client_socket_fd, char *data)
 {
   renvoie_message(client_socket_fd, data);
 }

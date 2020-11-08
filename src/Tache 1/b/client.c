@@ -110,7 +110,7 @@ int envoie_couleurs(int socketfd, char *pathname)
   return 0;
 }
 
-int envoi_nom_de_client(char data[1024], char message[1024])
+int envoi_nom_de_client(char *data, char *message)
 {
   strcpy(data, "nom: ");
   strcat(data, message);

@@ -20,5 +20,5 @@ int recois_envoie_message(int socketfd);
 /*
  *  Fonction renvoyant au client le nom
  */
-int renvoi_nom(int client_socket_fd, char data[1024]);
+int renvoi_nom(int client_socket_fd, char *data);
 #endif
