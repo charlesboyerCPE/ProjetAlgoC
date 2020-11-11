@@ -60,7 +60,8 @@ int envoie_recois_message(int socketfd)
   return 0;
 }
 
-int envoie_nom_de_client(int socketfd){
+int envoie_nom_de_client(int socketfd)
+{
   
 }
 
@@ -70,16 +71,42 @@ void analyse(char *pathname, char *data)
   couleur_compteur *cc = analyse_bmp_image(pathname);
 
   int count;
+  int nbCouleurs;
+  char temp_string[nbCouleurs];
+
   strcpy(data, "couleurs: ");
-  char temp_string[10] = "10,";
-  if (cc->size < 10) 
+
+  //Demander à l'utilisateur le nombre de couleurs
+  do
+  {
+    printf("\nVeuillez saisir le nombre de couleurs (<= 30): ");
+    scanf("%d\n", &nbCouleurs);
+    if (nbCouleurs > 30)
+    {
+      printf("Veuillez saisir un nombre inférieur ou égale à 30: ");
+    } else if (nbCouleurs < 0)
+    {
+      printf("Veuillez saisir un nombre supérieur à 0: ");
+    }
+
+  } while (nbCouleurs > 30 || nbCouleurs < 0);
+  
+  strcpy(data, "couleurs: ");
+  printf("Contenu data: %s\n", data);
+  printf("Contenu temp_string: %s\n", temp_string);
+
+  temp_string[nbCouleurs] = nbCouleurs;
+  strcat(temp_string, ", ");
+  printf("Contenu temp_string: %s\n", temp_string);
+
+  if (cc->size < nbCouleurs) 
   {
     sprintf(temp_string, "%d,", cc->size);
   }
   strcat(data, temp_string);
   
-  //choisir 10 couleurs
-  for (count = 1; count < 11 && cc->size - count >0; count++) 
+  //choisir nbCouleurs couleurs
+  for (count = 1; count < nbCouleurs + 1 && cc->size - count >0; count++) 
   {
     if(cc->compte_bit ==  BITS32) 
     {
@@ -116,7 +143,6 @@ int main(int argc, char **argv)
 {
   int socketfd;
   int bind_status;
-  char message_statut[50];
 
   struct sockaddr_in server_addr, client_addr;
 
@@ -138,37 +164,12 @@ int main(int argc, char **argv)
 
   //demande de connection au serveur
   int connect_status = connect(socketfd, (struct sockaddr *) &server_addr, sizeof(server_addr));
-  if ( connect_status < 0 ) 
-  {
+  if ( connect_status < 0 ) {
     perror("connection serveur");
     exit(EXIT_FAILURE);
   }
-
-  printf("Quel type de message souhaitez vous envoer : ");
-  scanf("%s", message_statut);
-
-  if(strcmp("nom", message_statut)){
-    printf("%s \n", message_statut);
-  }
-  else if (strcmp("calcul", message_statut))
-  {
-    printf("%s \n", message_statut);
-  }
-  else if(strcmp("couleur", message_statut))
-  {
-    printf("%s \n", message_statut);
-  }
-  else
-  {
-    envoie_couleurs(socketfd, argv[1]);
-  }
-  
-  
-
-  //printf("%i", message_statut);
   //envoie_recois_message(socketfd);
-  //envoie_couleurs(socketfd, argv[1]);
-
+  envoie_couleurs(socketfd, argv[1]);
 
   close(socketfd);
 }
