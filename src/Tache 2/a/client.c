@@ -72,7 +72,6 @@ void analyse(char *pathname, char *data)
 
   int count;
   int nbCouleurs;
-  char temp_string[nbCouleurs];
 
   strcpy(data, "couleurs: ");
 
@@ -80,25 +79,22 @@ void analyse(char *pathname, char *data)
   do
   {
     printf("\nVeuillez saisir le nombre de couleurs (<= 30): ");
-    scanf("%d\n", &nbCouleurs);
+    scanf("%d", &nbCouleurs);
+
     if (nbCouleurs > 30)
     {
-      printf("Veuillez saisir un nombre inférieur ou égale à 30: ");
+      printf("\nVeuillez saisir un nombre inférieur ou égale a 30");
     } else if (nbCouleurs < 0)
     {
-      printf("Veuillez saisir un nombre supérieur à 0: ");
+      printf("\nVeuillez saisir un nombre supérieur a 0");
     }
-
   } while (nbCouleurs > 30 || nbCouleurs < 0);
   
-  strcpy(data, "couleurs: ");
-  printf("Contenu data: %s\n", data);
-  printf("Contenu temp_string: %s\n", temp_string);
-
-  temp_string[nbCouleurs] = nbCouleurs;
-  strcat(temp_string, ", ");
-  printf("Contenu temp_string: %s\n", temp_string);
-
+  //Ajouter le nombre de couleur désiré
+  char temp_string[nbCouleurs];
+  sprintf(temp_string, "%d, ", nbCouleurs);
+  printf("data[0] = %c\n", data[0]);
+  
   if (cc->size < nbCouleurs) 
   {
     sprintf(temp_string, "%d,", cc->size);
@@ -126,16 +122,33 @@ void analyse(char *pathname, char *data)
 int envoie_couleurs(int socketfd, char *pathname) 
 {
   char data[1024];
+
+  //Initialisation du buffer
   memset(data, 0, sizeof(data));
+
+  //Analyse de l'image en paramètre
   analyse(pathname, data);
-  
-  int write_status = write(socketfd, data, strlen(data));
-  if ( write_status < 0 ) 
+
+  //Envoi au serveur des resultats de l'analyse  
+  int write_status = write(socketfd, data, sizeof(data));
+  if (write_status < 0)  
   {
-    perror("erreur ecriture");
+    perror("Erreur Ecriture");
     exit(EXIT_FAILURE);
   }
 
+  //On réinitialise le buffer pour y mettre la réponse du serveur
+  memset(data, 0, sizeof(data));
+
+  //Attente de la réponse du serveur
+  int read_status = read(socketfd, data, sizeof(data));
+  if (read_status < 0) 
+  {
+    perror("Erreur Lecture");
+    exit(EXIT_FAILURE);
+  }
+  
+  printf("Message Recu: %s\n", data);
   return 0;
 }
 

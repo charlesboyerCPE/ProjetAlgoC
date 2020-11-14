@@ -17,4 +17,20 @@
  */
 int recois_envoie_message(int socketfd);
 
+/*
+ * Fonction renvoyant au client le nom
+ * Paramètre: 
+ *      le socket de dialogue avec le client
+ *      LE tableau contenant le message
+ */
+int renvoi_nom(int client_socket_fd, char *data);
+
+/*
+ * Fonction renvoyant au client la couleur
+ * Paramètre: 
+ *      le socket de dialogue avec le client
+ *      Le tableau contenant le message
+ */
+int recois_couleurs(int client_socket_fd, char *data);
+
 #endif

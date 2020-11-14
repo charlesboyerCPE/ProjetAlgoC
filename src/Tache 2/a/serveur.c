@@ -18,6 +18,7 @@
 
 void plot(char *data) 
 {
+  int calculeCercle = 0;
 
   //Extraire le compteur et les couleurs RGB 
   FILE *p = popen("gnuplot -persist", "w");
@@ -43,9 +44,14 @@ void plot(char *data)
     {
       n = atoi(token);
     }
-    else {
+    else 
+    {
+      //On recherche le nombre de couleur dans le buffer
+      calculeCercle = 360 / data[0];
+      printf("calculeCercle = %d\n", calculeCercle);
+
       // Le numéro 36, parceque 360° (cercle) / 10 couleurs = 36
-      fprintf(p, "0 0 10 %d %d 0x%s\n", (count-1)*36, count*36, token+1);
+      fprintf(p, "0 0 10 %d %d 0x%s\n", (count-1)*calculeCercle, count*calculeCercle, token+1);
     }
     count++;
   }
@@ -56,7 +62,8 @@ void plot(char *data)
 
 /* renvoyer un message (*data) au client (client_socket_fd)
  */
-int renvoie_message(int client_socket_fd, char *data) {
+int renvoie_message(int client_socket_fd, char *data) 
+{
   int data_size = write (client_socket_fd, (void *) data, strlen(data));
       
   if (data_size < 0) {
@@ -78,7 +85,8 @@ int recois_envoie_message(int socketfd)
  
   // nouvelle connection de client
   int client_socket_fd = accept(socketfd, (struct sockaddr *) &client_addr, &client_addr_len);
-  if (client_socket_fd < 0 ) {
+  if (client_socket_fd < 0 ) 
+  {
     perror("accept");
     return(EXIT_FAILURE);
   }
@@ -89,7 +97,8 @@ int recois_envoie_message(int socketfd)
   //lecture de données envoyées par un client
   int data_size = read (client_socket_fd, (void *) data, sizeof(data));
       
-  if (data_size < 0) {
+  if (data_size < 0) 
+  {
     perror("erreur lecture");
     return(EXIT_FAILURE);
   }
@@ -112,6 +121,52 @@ int recois_envoie_message(int socketfd)
 
   //fermer le socket 
   close(socketfd);
+}
+
+int renvoi_nom(int client_socket_fd, char *data)
+{
+  renvoie_message(client_socket_fd, data);
+}
+
+int recois_couleurs(int client_socket_fd, char *data)
+{
+  FILE *fichierCouleur;
+
+  //Ouverture du fichier
+  fichierCouleur = fopen("saveCouleur.txt", "w");
+  if (fichierCouleur == NULL)
+  {
+    fprintf(stderr, "Impossible d'ouvrir le fichier\n");
+    return -1;
+  }
+
+  //Enregistrement du buffer dans le fichier
+  if (fichierCouleur)
+  {
+    if (fwrite(data, sizeof(char), strlen(data), fichierCouleur) == 0)
+    {
+      fprintf(stderr, "Erreur dans l'écriture du fichier\n");
+      return -1;
+    }
+    else
+    {
+      memset(data, 0, sizeof(data));
+      data = "Couleurs enregistrees";
+    }
+  }
+  else
+  {
+    printf("Impossible d'ecrire dans le fichier.\n");
+    
+    memset(data, 0, sizeof(data));
+    data = "Erreur enregistrement couleurs";
+  }
+  
+  //Envoi de la réponse au client
+  renvoie_message(client_socket_fd, data);
+
+  //Fermeture du fichier
+  fclose(fichierCouleur);
 }
 
 int main() 
