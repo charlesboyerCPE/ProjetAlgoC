@@ -20,11 +20,15 @@ void JSONParse(JSON json){
   printf("{\n");
   printf("\t\"code\":%s,\n", json.code);
   printf("\t\"valeurs\": [ ");
-  /* for(int i = 0; i < sizeof(json.valeurs); i++){
+  for(int i = 0; i < json.nb_values; i++){
     //Peut être tester si c'est un chiffre ou une string
-    printf("%s,", json.valeurs[i]);
-  } */
-  printf("%s", json.valeurs);
+    if (json.valeurs[i] && json.valeurs[i][0] != '\0')
+    {
+      printf("%s", json.valeurs[i]);
+      if (i+1 < json.nb_values && json.valeurs[i+1][0] != '\0')
+        printf(",");
+    }
+  } 
   printf("]\n");
   printf("}\n");
 }
@@ -187,9 +191,18 @@ int main(int argc, char **argv)
   //close(socketfd);
 
   JSON json;
+  json.nb_values = 3;
+  json.valeurs = malloc(sizeof(char*)*json.nb_values);
+
+  for (int i=0; i<10; i++)
+    json.valeurs[i] = malloc(sizeof(char) * 256);
+
   strcpy(json.code, "calcul");
-  strcpy(json.valeurs, "oui, non, caca");
+  strcpy(json.valeurs[0], "str");
+  strcpy(json.valeurs[1], "oui");
+  strcpy(json.valeurs[2], "caca");
   JSONParse(json);
+
 
 
 }

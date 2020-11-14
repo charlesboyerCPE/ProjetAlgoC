@@ -23,7 +23,8 @@ typedef struct JSON JSON;
 struct JSON
 {
     char code[50];
-    char valeurs[250];
+    int nb_values;
+    char** valeurs;
 };
 
 #endif
