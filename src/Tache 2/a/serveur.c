@@ -19,6 +19,10 @@
 void plot(char *data) 
 {
   int calculeCercle = 0;
+  char *nbCouleurs;
+
+  //On recherche le nombre de couleur dans le buffer
+  nbCouleurs = strtok(data, "couleurs: ");
 
   //Extraire le compteur et les couleurs RGB 
   FILE *p = popen("gnuplot -persist", "w");
@@ -46,11 +50,7 @@ void plot(char *data)
     }
     else 
     {
-      //On recherche le nombre de couleur dans le buffer
-      calculeCercle = 360 / data[0];
-      printf("calculeCercle = %d\n", calculeCercle);
-
-      // Le numéro 36, parceque 360° (cercle) / 10 couleurs = 36
+      calculeCercle = 360 / atoi(nbCouleurs);
       fprintf(p, "0 0 10 %d %d 0x%s\n", (count-1)*calculeCercle, count*calculeCercle, token+1);
     }
     count++;
@@ -171,7 +171,6 @@ int recois_couleurs(int client_socket_fd, char *data)
 
 int main() 
 {
-
   int socketfd;
   int bind_status;
   int client_addr_len;
