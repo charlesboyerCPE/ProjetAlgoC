@@ -59,43 +59,6 @@ int envoie_recois_message(int socketfd)
   return 0;
 }
 
-int envoie_balises(int socketfd)
-{
-  char data[1024];
-  // la réinitialisation de l'ensemble des données
-  memset(data, 0, sizeof(data));
-
-
-  // Demandez à l'utilisateur d'entrer un message
-  char message[100];
-  printf("Balises : ");
-  fgets(message, 1024, stdin);
-  strcpy(data, "balises:");
-  strcat(data, message);
-  
-  int write_status = write(socketfd, data, strlen(data));
-  if ( write_status < 0 ) 
-  {
-    perror("erreur ecriture");
-    exit(EXIT_FAILURE);
-  }
-
-  // la réinitialisation de l'ensemble des données
-  memset(data, 0, sizeof(data));
-
-
-  // lire les données de la socket
-  int read_status = read(socketfd, data, sizeof(data));
-  if ( read_status < 0 ) 
-  {
-    perror("erreur lecture");
-    return -1;
-  }
-
-  printf("Message recu: %s\n", data);
- 
-  return 0;
-}
 
 void analyse(char *pathname, char *data) 
 {
@@ -129,11 +92,29 @@ void analyse(char *pathname, char *data)
   data[strlen(data)-1] = '\0';
 }
 
-int envoie_couleurs(int socketfd, char *pathname) 
+
+int envoi_nom_de_client(char *data)
+{
+  strcpy(data, "nom: ");
+  strcat(data, "neptune");
+
+  return 0;
+}
+
+
+int envoie_operateur_numeros(int socketfd)
 {
   char data[1024];
+  // la réinitialisation de l'ensemble des données
   memset(data, 0, sizeof(data));
-  analyse(pathname, data);
+
+
+  // Demandez à l'utilisateur d'entrer un message
+  char message[1024];
+  printf("calcule : ");
+  fgets(message, 1024, stdin);
+  strcpy(data, "calcul: ");
+  strcat(data, message);
   
   int write_status = write(socketfd, data, strlen(data));
   if ( write_status < 0 ) 
@@ -142,8 +123,94 @@ int envoie_couleurs(int socketfd, char *pathname)
     exit(EXIT_FAILURE);
   }
 
+  // la réinitialisation de l'ensemble des données
+  memset(data, 0, sizeof(data));
+
+
+  // lire les données de la socket
+  int read_status = read(socketfd, data, sizeof(data));
+  if ( read_status < 0 ) 
+  {
+    perror("erreur lecture");
+    return -1;
+  }
+
+  printf("Resultat: %s\n", data);
+ 
   return 0;
 }
+
+
+int envoie_couleurs(int socketfd, char *pathname) 
+{
+  char data[1024];
+
+  //Initialisation du buffer
+  memset(data, 0, sizeof(data));
+
+  analyse(pathname, data);
+
+  //Envoi au serveur des resultats de l'analyse  
+  int write_status = write(socketfd, data, sizeof(data));
+  if (write_status < 0)  
+  {
+    perror("Erreur Ecriture");
+    exit(EXIT_FAILURE);
+  }
+
+  //On réinitialise le buffer pour y mettre la réponse du serveur
+  memset(data, 0, sizeof(data));
+
+  //Attente de la réponse du serveur
+  int read_status = read(socketfd, data, sizeof(data));
+  if (read_status < 0) 
+  {
+    perror("Erreur Lecture");
+    exit(EXIT_FAILURE);
+  }
+  
+  printf("Message Recu: %s\n", data);
+  return 0;
+}
+
+
+int envoie_balises(int socketfd)
+{
+  char data[1024];
+  // la réinitialisation de l'ensemble des données
+  memset(data, 0, sizeof(data));
+
+  // Demandez à l'utilisateur d'entrer un message
+  char message[100];
+  printf("Balises : ");
+  fgets(message, 1024, stdin);
+  strcpy(data, "balises:");
+  strcat(data, message);
+  
+  int write_status = write(socketfd, data, strlen(data));
+  if ( write_status < 0 ) 
+  {
+    perror("erreur ecriture");
+    exit(EXIT_FAILURE);
+  }
+
+  // la réinitialisation de l'ensemble des données
+  memset(data, 0, sizeof(data));
+
+
+  // lire les données de la socket
+  int read_status = read(socketfd, data, sizeof(data));
+  if ( read_status < 0 ) 
+  {
+    perror("erreur lecture");
+    return -1;
+  }
+
+  printf("Message recu: %s\n", data);
+ 
+  return 0;
+}
+
 
 int main(int argc, char **argv) 
 {

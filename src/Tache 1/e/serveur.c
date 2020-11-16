@@ -65,8 +65,8 @@ int renvoie_message(int client_socket_fd, char *data) {
   }
 }
 
-int recois_balises(int client_socket_fd, char data[1024]){
-
+int recois_balises(int client_socket_fd, char data[1024])
+{
   int nb_balises;
   int index = 1;
   char response[100];

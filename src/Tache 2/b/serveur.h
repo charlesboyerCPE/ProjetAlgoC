@@ -17,4 +17,12 @@
  */
 int recois_envoie_message(int socketfd);
 
+typedef struct JSON JSON;
+struct JSON
+{
+    char code[50];
+    int nb_values;
+    char** valeurs;
+};
+
 #endif

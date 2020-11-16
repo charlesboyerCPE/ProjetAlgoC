@@ -21,7 +21,7 @@ int recois_envoie_message(int socketfd);
  * accepter la nouvelle connection d'un client et lire les données
  * envoyées par le client. En suite, le serveur envoie un calcul en retour
 */
-int recois_numeros_calcule(int socketfd);
+int recois_numeros_calcule(int client_socket_fd, char *data);
 
 
 

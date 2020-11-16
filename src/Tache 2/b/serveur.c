@@ -16,6 +16,23 @@
 
 #include "serveur.h"
 
+void JSONParse(JSON json){
+  printf("{\n");
+  printf("\t\"code\":%s,\n", json.code);
+  printf("\t\"valeurs\": [ ");
+  for(int i = 0; i < json.nb_values; i++){
+    //Peut être tester si c'est un chiffre ou une string
+    if (json.valeurs[i] && json.valeurs[i][0] != '\0')
+    {
+      printf("%s", json.valeurs[i]);
+      if (i+1 < json.nb_values && json.valeurs[i+1][0] != '\0')
+        printf(",");
+    }
+  } 
+  printf("]\n");
+  printf("}\n");
+}
+
 void plot(char *data) 
 {
 
@@ -71,6 +88,7 @@ int renvoie_message(int client_socket_fd, char *data) {
  */
 int recois_envoie_message(int socketfd) 
 {
+  JSON json;
   struct sockaddr_in client_addr;
   char data[1024];
 
@@ -87,12 +105,13 @@ int recois_envoie_message(int socketfd)
   memset(data, 0, sizeof(data));
 
   //lecture de données envoyées par un client
-  int data_size = read (client_socket_fd, (void *) data, sizeof(data));
+  //int data_size = read (client_socket_fd, &json, sizeof(json));
+  JSONParse(json);
       
-  if (data_size < 0) {
+  /*if (data_size < 0) {
     perror("erreur lecture");
     return(EXIT_FAILURE);
-  }
+  }*/
   
   /*
    * extraire le code des données envoyées par le client. 

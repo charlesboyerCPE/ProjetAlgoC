@@ -35,6 +35,27 @@ int recois_envoie_message(int socketfd);
 void plot(char *data);
 
 /*!
+ * \fn int renvoi_nom(int client_socket_fd, char *data)
+ * \brief Fonction permettant de renvoyer le nom au client
+ * \param [in] client_socket_fd: l'identifiant de la socket de dialogue avec le client
+ * \param [in] data: Pointeur vers un tableau contenant le message à renvoyer
+ * 
+ * \return 0 si tout a bien fonctionner, -1 si il y a eu une erreur
+ */
+int renvoi_nom(int client_socket_fd, char *data);
+
+/*!
+ * \fn int recois_numeros_calcule(int socketfd)
+ * \brief Fonction permettant de recevoir un opérateur et deux nombre.
+ *      La fonction calcul l'opération et envoi le résultat au client
+ * \param [in] client_socket_fd: l'identifiant de la socket de dialogue avec le client
+ * \param [in] data: le buffer contenant le message recu
+ * 
+ * \return 0 si tout a bien fonctionner, -1 si il y a eu une erreur
+ */
+int recois_numeros_calcule(int client_socket_fd, char *data); //A REFAIRE
+
+/*!
  * \fn int renvoie_message(int client_socket_fd, char *data)
  * \brief Fonction permettant de renvoyer un message au client
  * \param [in] client_socket_fd: l'identifiant de la socket de dialogue avec le client
@@ -46,22 +67,25 @@ int renvoie_message(int client_socket_fd, char *data);
 
 /*!
  * \fn int renvoie_message(int client_socket_fd, char *data)
- * \brief Fonction permettant de renvoyer un message au client
+ * \brief Fonction permettant de recevoir les couleurs d'une image.
+ *      La fonction sauvegarde le message dans un fichier txt.
  * \param [in] client_socket_fd: l'identifiant de la socket de dialogue avec le client
- * \param [in] data: POinteur vers un tableau contenant le message à envoyer
+ * \param [in] data: Buffer contenant le message à envoyer
  * 
  * \return 0 si tout a bien fonctionner, -1 si il y a eu une erreur
  */
-int renvoi_couleurs(int client_socket_fd, char *data);
+int recois_couleurs(int client_socket_fd, char *data);
 
 /*!
  * \fn int recois_balises(int socketfd)
  * \brief Fonction permettant de recevoir des balise en provenance du client.
  *      La fonction enregistre les balises dans un fichier et envoi un message au client
  *      pour lui indiquer que les balises ont étaient enregistrés.
- * \param [in] socketfd: l'identifiant de la socket
+ * \param [in] client_socket_fd: l'identifiant de la socket de dialogue avec le client
+ * \param [in] data: le buffer contenant le message recu
  * 
- * \return 0 si tout a bien fonctionner, -1 si il y a eu une erreur
+ * \return 0
  */
-int recois_balises(int socketfd);
+int recois_balises(int client_socket_fd, char *data);
+
 #endif
