@@ -19,13 +19,13 @@
 void JSONParse(JSON json)
 {
   printf("{\n");
-  printf("\t\"code\":%s,\n", json.code);
+  printf("\t\"code\":\"%s\",\n", json.code);
   printf("\t\"valeurs\": [ ");
-  for(int i = 0; i < json.nb_values; i++){
+  for(int i = 0; i < NB_STRINGS; i++){
     if (json.valeurs[i] && json.valeurs[i][0] != '\0')
     {
-      printf("%s", json.valeurs[i]);
-      if (i+1 < json.nb_values && json.valeurs[i+1][0] != '\0')
+      printf("\"%s\"", json.valeurs[i]);
+      if (i+1 < NB_STRINGS && json.valeurs[i+1][0] != '\0')
         printf(",");
     }
   } 
@@ -148,7 +148,7 @@ int envoie_couleurs(int socketfd, char *pathname)
 
 int envoie_json(int socketfd, JSON json)
 {
-  int write_status = write(socketfd, &json, sizeof(&json));
+  int write_status = write(socketfd, &json, sizeof(json));
   if ( write_status < 0 ) 
   {
     perror("erreur ecriture");
@@ -190,24 +190,11 @@ int main(int argc, char **argv)
   //envoie_recois_message(socketfd);
   //envoie_couleurs(socketfd, argv[1]);
 
-  JSON json;
-  json.nb_values = 3;
-  json.valeurs = malloc(sizeof(char*)*json.nb_values);
-
-  for (int i=0; i<10; i++)
-    json.valeurs[i] = malloc(sizeof(char) * 256);
-
-  strcpy(json.code, "calcul");
-  strcpy(json.valeurs[0], "str");
-  strcpy(json.valeurs[1], "oui");
-  strcpy(json.valeurs[2], "caca");
+  JSON json = {"calcul", {"oui", "non", "haha"}};
   JSONParse(json);
-<<<<<<< HEAD
   envoie_json(socketfd, json);
 
   close(socketfd);
 
 
-=======
->>>>>>> 314b7386da7e66069574e9d438ed8ecba29739c2
 }

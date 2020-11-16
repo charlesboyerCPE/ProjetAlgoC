@@ -13,6 +13,9 @@
  */
 #define PORT 8089
 
+#define NB_STRINGS 30
+#define STRING_LENGTH 256
+
 /* 
  * Fonction d'envoi et de réception de messages
  * Il faut un argument : l'identifiant de la socket
@@ -23,8 +26,7 @@ typedef struct JSON JSON;
 struct JSON
 {
     char code[50];
-    int nb_values;
-    char** valeurs;
+    char valeurs[NB_STRINGS][STRING_LENGTH];
 };
 
 #endif
