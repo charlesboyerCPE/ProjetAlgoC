@@ -16,11 +16,14 @@
 #include "client.h"
 #include "bmp.h"
 
-void JSONParse(JSON json){
+void JSONParse(JSON json)
+{
   printf("{\n");
   printf("\t\"code\":%s,\n", json.code);
   printf("\t\"valeurs\": [ ");
-  for(int i = 0; i < json.nb_values; i++){
+
+  for(int i = 0; i < json.nb_values; i++)
+  {
     //Peut être tester si c'est un chiffre ou une string
     if (json.valeurs[i] && json.valeurs[i][0] != '\0')
     {
@@ -89,7 +92,6 @@ void analyse(char *pathname, char *data)
 
   int count;
   int nbCouleurs;
-  char temp_string[nbCouleurs];
 
   strcpy(data, "couleurs: ");
 
@@ -97,25 +99,21 @@ void analyse(char *pathname, char *data)
   do
   {
     printf("\nVeuillez saisir le nombre de couleurs (<= 30): ");
-    scanf("%d\n", &nbCouleurs);
+    scanf("%d", &nbCouleurs);
+
     if (nbCouleurs > 30)
     {
-      printf("Veuillez saisir un nombre inférieur ou égale à 30: ");
+      printf("\nVeuillez saisir un nombre inférieur ou égale a 30");
     } else if (nbCouleurs < 0)
     {
-      printf("Veuillez saisir un nombre supérieur à 0: ");
+      printf("\nVeuillez saisir un nombre supérieur a 0");
     }
-
   } while (nbCouleurs > 30 || nbCouleurs < 0);
   
-  strcpy(data, "couleurs: ");
-  printf("Contenu data: %s\n", data);
-  printf("Contenu temp_string: %s\n", temp_string);
-
-  temp_string[nbCouleurs] = nbCouleurs;
-  strcat(temp_string, ", ");
-  printf("Contenu temp_string: %s\n", temp_string);
-
+  //Ajouter le nombre de couleur désiré
+  char temp_string[nbCouleurs];
+  sprintf(temp_string, "%d, ", nbCouleurs);
+  
   if (cc->size < nbCouleurs) 
   {
     sprintf(temp_string, "%d,", cc->size);
@@ -202,7 +200,4 @@ int main(int argc, char **argv)
   strcpy(json.valeurs[1], "oui");
   strcpy(json.valeurs[2], "caca");
   JSONParse(json);
-
-
-
 }

@@ -36,6 +36,7 @@ void plot(char *data)
   fprintf(p, "set style fill transparent solid 0.9 noborder\n");
   fprintf(p, "set title 'Top 10 colors'\n");
   fprintf(p, "plot '-' with circles lc rgbcolor variable\n");
+
   while(1) 
   {
     char *token = strtok_r(str, ",", &saveptr);
@@ -50,11 +51,13 @@ void plot(char *data)
     }
     else 
     {
+      //On calcule la surface du cercle
       calculeCercle = 360 / atoi(nbCouleurs);
       fprintf(p, "0 0 10 %d %d 0x%s\n", (count-1)*calculeCercle, count*calculeCercle, token+1);
     }
     count++;
   }
+
   fprintf(p, "e\n");
   printf("Plot: FIN\n");
   pclose(p);

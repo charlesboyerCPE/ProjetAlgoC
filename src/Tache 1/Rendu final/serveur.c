@@ -58,8 +58,7 @@ void plot(char *data)
   pclose(p);
 }
 
-/* renvoyer un message (*data) au client (client_socket_fd)
- */
+
 int renvoie_message(int client_socket_fd, char *data) 
 {
   int data_size = write (client_socket_fd, (void *) data, strlen(data));
@@ -106,11 +105,17 @@ int recois_envoie_message(int socketfd)
   char code[10];
   sscanf(data, "%s", code);
 
-  //Si le message commence par le mot: 'message:' 
-  if (strcmp(code, "balises:") == 0) {
-    renvoie_message(client_socket_fd, data);
+  //En fonction du type de message
+  if (strcmp(code, "nom:") == 0) 
+  {
+    renvoi_nom(client_socket_fd, data);
   }
-  else {
+  else if (strcmp(code, "couleurs:") == 0)
+  {
+    recois_couleurs(client_socket_fd, data);
+  }
+  else 
+  {
     plot(data);
   }
 
@@ -118,43 +123,110 @@ int recois_envoie_message(int socketfd)
   close(socketfd);
 }
 
-int recois_balises(int socketfd)
-{
-  struct sockaddr_in client_addr;
-  char data[1024];
 
-  int client_addr_len = sizeof(client_addr);
- 
-  // nouvelle connection de client
-  int client_socket_fd = accept(socketfd, (struct sockaddr *) &client_addr, &client_addr_len);
-  if (client_socket_fd < 0 ) 
+int renvoi_nom(int client_socket_fd, char *data)
+{
+  renvoie_message(client_socket_fd, data);
+
+  return 0;
+}
+
+
+int recois_numeros_calcule(int client_socket_fd, char *data)
+{
+  int op1;
+  int op2;
+  char response[100] = "calcul : ";
+  char buffer[100];
+
+  if (2 == sscanf(data, "%*[^0-9]%d%*[^0-9]%d", &op1, &op2))
   {
-    perror("accept");
-    return(EXIT_FAILURE);
+    if (strchr(data, '+') != NULL){
+      sprintf(buffer, "%i", (op1+op2));
+    }
+    else if (strchr(data, '-') != NULL){
+      sprintf(buffer, "%i", (op1-op2));
+    }
+    else if (strchr(data, '*') != NULL){
+      sprintf(buffer, "%i", (op1*op2));
+    }
+    else{
+      sprintf(buffer, "Pas d'oparateur valable");
+    }
+    strcat(response, buffer);
   }
 
-  // la réinitialisation de l'ensemble des données
-  memset(data, 0, sizeof(data));
+  renvoie_message(client_socket_fd, response);
+  
+  printf ("Message recu: %s\n", data);
+  char code[10];
+  sscanf(data, "%s", code);
 
-  //lecture de données envoyées par un client
-  int data_size = read (client_socket_fd, (void *) data, sizeof(data));   
-  if (data_size < 0) {
-    perror("erreur lecture");
-    return(EXIT_FAILURE);
+  return 0;
+}
+
+
+int recois_couleurs(int client_socket_fd, char *data)
+{
+  FILE *fichierCouleur;
+
+  //Ouverture du fichier
+  fichierCouleur = fopen("saveCouleur.txt", "w");
+  if (fichierCouleur == NULL)
+  {
+    fprintf(stderr, "Impossible d'ouvrir le fichier\n");
+    return -1;
+  }
+
+  //Enregistrement du buffer dans le fichier
+  if (fichierCouleur)
+  {
+    if (fwrite(data, sizeof(char), strlen(data), fichierCouleur) == 0)
+    {
+      fprintf(stderr, "Erreur dans l'écriture du fichier\n");
+      return -1;
+    }
+    else
+    {
+      memset(data, 0, sizeof(data));
+      data = "Couleurs enregistrees";
+    }
+  }
+  else
+  {
+    printf("Impossible d'ecrire dans le fichier.\n");
+    
+    memset(data, 0, sizeof(data));
+    data = "Erreur enregistrement couleurs";
   }
   
-  /*
-   * extraire le code des données envoyées par le client. 
-   * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
-   */
+  //Envoi de la réponse au client
+  printf("Contenu data: %s\n", data);
+  renvoie_message(client_socket_fd, data);
+
+  //Fermeture du fichier
+  fclose(fichierCouleur);
+}
+
+
+int recois_balises(int client_socket_fd, char *data)
+{
   int nb_balises;
   int index = 1;
   char response[100];
   char *str = strtok(data, "#");
+
+  FILE *file = fopen("balises.txt", "w");
+
+  if(file == NULL){
+    printf("Impossible d'ouvrir le fichier\n");
+    renvoie_message(client_socket_fd, "Un problème est survenu sur le serveur\n");
+    return -1;
+  }
+
   if (1 == sscanf(str, "%*[^0-9]%d", &nb_balises)){
     printf ("Message recu: %s\n", data);
     str = strtok(NULL, "#");
-    FILE *file = fopen("balises.txt", "w");
     while (str != NULL && index <= nb_balises)
     {
       char write[15] = "#";
@@ -168,16 +240,13 @@ int recois_balises(int socketfd)
       index++;
     }
     
-    
-    fclose(file);
     renvoie_message(client_socket_fd, "Balises enregistrées"); 
   }
-
-  //fermer le socket 
-  close(socketfd);
+  fclose(file);
 
   return 0;
 }
+
 
 int main() 
 {

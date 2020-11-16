@@ -25,6 +25,22 @@
 int envoie_recois_message(int socketfd);
 
 /*!
+ * \fn int envoi_nom_de_client(char *data)
+ * \brief Fonction permettant l'envoi du nom du client au serveur
+ * \param [in] data: le buffer contenant le message a envoyer
+ * \return 0
+ */
+int envoi_nom_de_client(char *data);
+
+/*!
+ * \fn int envoie_operateur_numeros(int socketfd)
+ * \brief Fonction permettant d'un opérateur et de deux nombres.
+ * \param [in] socketfd: l'identifiant de la socket de dialogue avec le serveur
+ * \return 0
+ */
+int envoie_operateur_numeros(int socketfd); //A REFAIRE
+
+/*!
  * \fn int envoie_balises(int socketfd)
  * \brief Fonction permettant l'envoi de balises
  * \param [in] socketFd: l'identifiant de la socket de dialogue avec le serveur

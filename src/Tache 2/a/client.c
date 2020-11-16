@@ -93,7 +93,6 @@ void analyse(char *pathname, char *data)
   //Ajouter le nombre de couleur désiré
   char temp_string[nbCouleurs];
   sprintf(temp_string, "%d, ", nbCouleurs);
-  printf("data[0] = %c\n", data[0]);
   
   if (cc->size < nbCouleurs) 
   {

@@ -114,7 +114,8 @@ int recois_envoie_message(int socketfd)
   close(socketfd);
 }
 
-int recois_numeros_calcule(int socketfd){
+int recois_numeros_calcule(int socketfd)
+{
 
   struct sockaddr_in client_addr;
   char data[1024];

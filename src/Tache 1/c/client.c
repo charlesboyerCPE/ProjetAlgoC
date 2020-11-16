@@ -20,7 +20,6 @@
  * Fonction d'envoi et de réception de messages
  * Il faut un argument : l'identifiant de la socket
  */
-
 int envoie_recois_message(int socketfd) 
 {
 
@@ -60,11 +59,12 @@ int envoie_recois_message(int socketfd)
   return 0;
 }
 
-int envoie_operateur_numeros(int socketfd){
+int envoie_operateur_numeros(int socketfd)
+{
   char data[1024];
+
   // la réinitialisation de l'ensemble des données
   memset(data, 0, sizeof(data));
-
 
   // Demandez à l'utilisateur d'entrer un message
   char message[1024];
@@ -82,7 +82,6 @@ int envoie_operateur_numeros(int socketfd){
 
   // la réinitialisation de l'ensemble des données
   memset(data, 0, sizeof(data));
-
 
   // lire les données de la socket
   int read_status = read(socketfd, data, sizeof(data));
