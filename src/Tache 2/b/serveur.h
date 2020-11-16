@@ -11,6 +11,8 @@
 
 #define PORT 8089
 
+#define NB_STRINGS 30
+#define STRING_LENGTH 256
 /* accepter la nouvelle connection d'un client et lire les données
  * envoyées par le client. En suite, le serveur envoie un message
  * en retour
@@ -21,8 +23,7 @@ typedef struct JSON JSON;
 struct JSON
 {
     char code[50];
-    int nb_values;
-    char** valeurs;
+    char valeurs[NB_STRINGS][STRING_LENGTH];
 };
 
 #endif

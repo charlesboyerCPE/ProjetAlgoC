@@ -20,15 +20,14 @@ void JSONParse(JSON json){
   printf("{\n");
   printf("\t\"code\":%s,\n", json.code);
   printf("\t\"valeurs\": [ ");
-  for(int i = 0; i < json.nb_values; i++){
-    //Peut être tester si c'est un chiffre ou une string
+  for(int i = 0; i < NB_STRINGS; i++){
     if (json.valeurs[i] && json.valeurs[i][0] != '\0')
     {
       printf("%s", json.valeurs[i]);
-      if (i+1 < json.nb_values && json.valeurs[i+1][0] != '\0')
+      if (i+1 < NB_STRINGS && json.valeurs[i+1][0] != '\0')
         printf(",");
     }
-  } 
+  }
   printf("]\n");
   printf("}\n");
 }
@@ -105,29 +104,9 @@ int recois_envoie_message(int socketfd)
   memset(data, 0, sizeof(data));
 
   //lecture de données envoyées par un client
-  //int data_size = read (client_socket_fd, &json, sizeof(json));
+  int data_size = read (client_socket_fd, &json, sizeof(json));
+  printf("Message recu : %s\n", json.code);
   JSONParse(json);
-      
-  /*if (data_size < 0) {
-    perror("erreur lecture");
-    return(EXIT_FAILURE);
-  }*/
-  
-  /*
-   * extraire le code des données envoyées par le client. 
-   * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
-   */
-  printf ("Message recu: %s\n", data);
-  char code[10];
-  sscanf(data, "%s", code);
-
-  //Si le message commence par le mot: 'message:' 
-  if (strcmp(code, "message:") == 0) {
-    renvoie_message(client_socket_fd, data);
-  }
-  else {
-    plot(data);
-  }
 
   //fermer le socket 
   close(socketfd);
