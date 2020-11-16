@@ -105,9 +105,21 @@ int recois_envoie_message(int socketfd)
   memset(data, 0, sizeof(data));
 
   //lecture de données envoyées par un client
-  int data_size = read (client_socket_fd, &json, sizeof(json));
-  printf("Message recu : %s\n", json.code);
-  JSONParse(json);
+  int data_size = read (client_socket_fd, data, sizeof(data));
+  printf("Message recu : %s\n", data);
+  char delim[] = "\"";
+  if(data[0] == '{' && data[strlen(data) - 1] == '}') {
+    char *ptr = strtok(data, delim);
+    ptr = strtok(NULL, delim);
+
+    while(ptr != NULL) {
+      printf("%s\n", ptr);
+      ptr = strtok(NULL, delim);
+      ptr = strtok(NULL, delim);
+    }
+  }
+
+  //JSONParse(json);
 
   //fermer le socket 
   close(socketfd);

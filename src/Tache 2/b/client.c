@@ -47,13 +47,14 @@ int envoie_recois_message(int socketfd)
 
 
   // Demandez à l'utilisateur d'entrer un message
-  char message[100];
+  /*char message[100];
   printf("Votre message (max 1000 caracteres): ");
   fgets(message, 1024, stdin);
   strcpy(data, "message: ");
-  strcat(data, message);
+  strcat(data, message);*/
+  char* json = "{code:\"calcul\",valeurs:[\"oui\",\"non\",\"10\"]}";
   
-  int write_status = write(socketfd, data, strlen(data));
+  int write_status = write(socketfd, json, strlen(json));
   if ( write_status < 0 ) 
   {
     perror("erreur ecriture");
@@ -61,7 +62,7 @@ int envoie_recois_message(int socketfd)
   }
 
   // la réinitialisation de l'ensemble des données
-  memset(data, 0, sizeof(data));
+  memset(data, 0, sizeof(json));
 
 
   // lire les données de la socket
@@ -146,18 +147,6 @@ int envoie_couleurs(int socketfd, char *pathname)
   return 0;
 }
 
-int envoie_json(int socketfd, JSON json)
-{
-  int write_status = write(socketfd, &json, sizeof(json));
-  if ( write_status < 0 ) 
-  {
-    perror("erreur ecriture");
-    exit(EXIT_FAILURE);
-  }
-  
-  return 0;
-}
-
 int main(int argc, char **argv) 
 {
   int socketfd;
@@ -187,12 +176,9 @@ int main(int argc, char **argv)
     perror("connection serveur");
     exit(EXIT_FAILURE);
   }
-  //envoie_recois_message(socketfd);
   //envoie_couleurs(socketfd, argv[1]);
 
-  JSON json = {"calcul", {"oui", "non", "haha"}};
-  JSONParse(json);
-  envoie_json(socketfd, json);
+  envoie_recois_message(socketfd);
 
   close(socketfd);
 
