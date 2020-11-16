@@ -23,14 +23,14 @@ L'objectif de cette première tâche est de se familiariser avec le code et de m
 
 ## Bibliothèques
 
-sys/types.h
-sys/socket.h
-sys/epoll.h
-netinet/in.h
-stdio.h
-stdlib.h
-string.h
-unistd.h
+- sys/types.h
+- sys/socket.h
+- sys/epoll.h
+- netinet/in.h
+- stdio.h
+- stdlib.h
+- string.h
+- unistd.h
 
 ## Références
 
