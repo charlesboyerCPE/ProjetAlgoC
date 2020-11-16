@@ -21,7 +21,6 @@ void JSONParse(JSON json){
   printf("\t\"code\":%s,\n", json.code);
   printf("\t\"valeurs\": [ ");
   for(int i = 0; i < json.nb_values; i++){
-    //Peut être tester si c'est un chiffre ou une string
     if (json.valeurs[i] && json.valeurs[i][0] != '\0')
     {
       printf("%s", json.valeurs[i]);
@@ -75,11 +74,6 @@ int envoie_recois_message(int socketfd)
   printf("Message recu: %s\n", data);
  
   return 0;
-}
-
-int envoie_nom_de_client(int socketfd)
-{
-  
 }
 
 void analyse(char *pathname, char *data) 
@@ -156,39 +150,49 @@ int envoie_couleurs(int socketfd, char *pathname)
   return 0;
 }
 
+int envoie_json(int socketfd, JSON json)
+{
+  int write_status = write(socketfd, &json, sizeof(&json));
+  if ( write_status < 0 ) 
+  {
+    perror("erreur ecriture");
+    exit(EXIT_FAILURE);
+  }
+  
+  return 0;
+}
+
 int main(int argc, char **argv) 
 {
-  /* int socketfd;
+  int socketfd;
   int bind_status;
 
-  struct sockaddr_in server_addr, client_addr; */
+  struct sockaddr_in server_addr, client_addr;
 
   /*
    * Creation d'une socket
    */
-  /* socketfd = socket(AF_INET, SOCK_STREAM, 0);
+  socketfd = socket(AF_INET, SOCK_STREAM, 0);
   if ( socketfd < 0 ) 
   {
     perror("socket");
     exit(EXIT_FAILURE);
-  } */
+  }
 
   //détails du serveur (adresse et port)
-  /* memset(&server_addr, 0, sizeof(server_addr));
+  memset(&server_addr, 0, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(PORT);
   server_addr.sin_addr.s_addr = INADDR_ANY;
- */
+
   //demande de connection au serveur
-  /* int connect_status = connect(socketfd, (struct sockaddr *) &server_addr, sizeof(server_addr));
+  int connect_status = connect(socketfd, (struct sockaddr *) &server_addr, sizeof(server_addr));
   if ( connect_status < 0 ) {
     perror("connection serveur");
     exit(EXIT_FAILURE);
-  } */
+  }
   //envoie_recois_message(socketfd);
   //envoie_couleurs(socketfd, argv[1]);
-
-  //close(socketfd);
 
   JSON json;
   json.nb_values = 3;
@@ -202,7 +206,9 @@ int main(int argc, char **argv)
   strcpy(json.valeurs[1], "oui");
   strcpy(json.valeurs[2], "caca");
   JSONParse(json);
+  envoie_json(socketfd, json);
 
+  close(socketfd);
 
 
 }

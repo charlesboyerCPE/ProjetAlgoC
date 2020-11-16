@@ -103,42 +103,13 @@ int recois_envoie_message(int socketfd)
   sscanf(data, "%s", code);
 
   //Si le message commence par le mot: 'message:' 
-  if (strcmp(code, "message:") == 0) {
-    renvoie_message(client_socket_fd, data);
-  }
-  else {
-    plot(data);
-  }
+  recois_numeros_calcule(client_socket_fd, data);
 
   //fermer le socket 
   close(socketfd);
 }
 
-int recois_numeros_calcule(int socketfd){
-
-  struct sockaddr_in client_addr;
-  char data[1024];
-
-  int client_addr_len = sizeof(client_addr);
- 
-  // nouvelle connection de client
-  int client_socket_fd = accept(socketfd, (struct sockaddr *) &client_addr, &client_addr_len);
-  if (client_socket_fd < 0 ) {
-    perror("accept");
-    return(EXIT_FAILURE);
-  }
-
-  // la réinitialisation de l'ensemble des données
-  memset(data, 0, sizeof(data));
-
-  //lecture de données envoyées par un client
-  int data_size = read (client_socket_fd, (void *) data, sizeof(data));
-      
-  if (data_size < 0) {
-    perror("erreur lecture");
-    return(EXIT_FAILURE);
-  }
-  
+int recois_numeros_calcule(int client_socket_fd, char *data){
   /*
    * extraire le code des données envoyées par le client. 
    * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
@@ -169,8 +140,7 @@ int recois_numeros_calcule(int socketfd){
   char code[10];
   sscanf(data, "%s", code);
 
-  //fermer le socket 
-  close(socketfd);
+  return 0;
 }
 
 int main() 
@@ -213,8 +183,7 @@ int main()
   listen(socketfd, 10);
 
   //Lire et répondre au client
-  //recois_envoie_message(socketfd);
-  recois_numeros_calcule(socketfd);
+  recois_envoie_message(socketfd);
 
   return 0;
 }
