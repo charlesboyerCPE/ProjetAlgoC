@@ -138,7 +138,7 @@ int recois_numeros_calcule(int client_socket_fd, char *data)
   int op2;
   char response[100] = "calcul : ";
   char buffer[100];
-  
+
   if (2 == sscanf(data, "%*[^0-9]%d%*[^0-9]%d", &op1, &op2))
   {
     if (strchr(data, '+') != NULL){
@@ -288,7 +288,6 @@ int main()
 
   //Lire et répondre au client
   //recois_envoie_message(socketfd);
-  recois_balises(socketfd);
 
   return 0;
 }
