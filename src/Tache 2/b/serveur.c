@@ -16,18 +16,19 @@
 
 #include "serveur.h"
 
-void JSONParse(JSON json){
+void JSONParse(JSON json)
+{
   printf("{\n");
-  printf("\t\"code\":%s,\n", json.code);
+  printf("\t\"code\":\"%s\",\n", json.code);
   printf("\t\"valeurs\": [ ");
   for(int i = 0; i < NB_STRINGS; i++){
     if (json.valeurs[i] && json.valeurs[i][0] != '\0')
     {
-      printf("%s", json.valeurs[i]);
+      printf("\"%s\"", json.valeurs[i]);
       if (i+1 < NB_STRINGS && json.valeurs[i+1][0] != '\0')
         printf(",");
     }
-  }
+  } 
   printf("]\n");
   printf("}\n");
 }
