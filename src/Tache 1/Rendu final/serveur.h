@@ -53,7 +53,7 @@ int renvoi_nom(int client_socket_fd, char *data);
  * 
  * \return 0 si tout a bien fonctionner, -1 si il y a eu une erreur
  */
-int recois_numeros_calcule(int client_socket_fd, char *data); //A REFAIRE
+int recois_numeros_calcule(int client_socket_fd, char *data);
 
 /*!
  * \fn int renvoie_message(int client_socket_fd, char *data)

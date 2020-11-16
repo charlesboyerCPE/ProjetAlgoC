@@ -109,7 +109,8 @@ int recois_envoie_message(int socketfd)
   close(socketfd);
 }
 
-int recois_numeros_calcule(int client_socket_fd, char *data){
+int recois_numeros_calcule(int client_socket_fd, char *data)
+{
   /*
    * extraire le code des données envoyées par le client. 
    * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
