@@ -113,10 +113,12 @@ int traite_balises(JSON json){
     return -1;
   }
 
-  if(fichier){
+  if(fichier)
+  {
     for(int i = 0; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
     {
-      if(json.valeurs[i][0] != '\0'){
+      if(json.valeurs[i][0] != '\0')
+      {
         char insert[50] = "";
         strcpy(insert, json.valeurs[i]);
         strcat(insert, "\n");
