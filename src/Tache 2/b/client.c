@@ -55,8 +55,23 @@ int envoie_recois_message(int socketfd)
   strcpy(data, "message: ");
   strcat(data, message);*/
 
+
+  /*
+  * Tests avec JSON en dur
+  */
+  char messageType[100] = "";
+  char message[100] = "";
+  char json[1024];
+  printf("Votre type de message ? (calcul, message, couleurs, balises) : ");
+  fgets(messageType, 1024, stdin);
+  strtok(messageType, "\n");
+  printf("Votre message : ");
+  fgets(message, 1024, stdin);
+  strtok(message, "\n");
+  sprintf(json, "{code:\"%s\",valeurs:[%s]}", messageType, message);
+
   //char* json = "{code:\"couleurs\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
-  char* json = "{code:\"balises\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
+  //char* json = "{code:\"balises\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
   //char* json = "{code:\"calcul\",valeurs:[10,15]}";
   //char* json = "{code:\"message\",valeurs:[\"Bonjour c'est un test"]}";
   
@@ -68,7 +83,7 @@ int envoie_recois_message(int socketfd)
   }
 
   // la réinitialisation de l'ensemble des données
-  memset(data, 0, sizeof(json));
+  memset(json, 0, sizeof(json));
 
 
   // lire les données de la socket
