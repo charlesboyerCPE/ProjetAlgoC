@@ -16,7 +16,7 @@
 
 #include "serveur.h"
 
-void JSONParse(JSON json)
+void JSONToString(JSON json)
 {
   printf("{\n");
   printf("\t\"code\":\"%s\",\n", json.code);
@@ -31,6 +31,31 @@ void JSONParse(JSON json)
   } 
   printf("]\n");
   printf("}\n");
+}
+
+struct JSON JSONparse(char str[])
+{
+  struct JSON json = { "", { "" }};
+  char delim[] = "\":,{[]}";
+
+  if(str[0] == '{' && str[strlen(str) - 1] == '}') {
+    char valeurs[NB_STRINGS][STRING_LENGTH];
+    int i = 0;
+
+    char *ptrtoken = strtok(str, delim);
+    ptrtoken = strtok(NULL, delim);
+    char *code = strdup(ptrtoken);
+    strcpy(json.code, code);
+    ptrtoken = strtok(NULL, delim);
+    ptrtoken = strtok(NULL, delim);
+    while(ptrtoken != NULL) {
+      char *temp = strdup(ptrtoken);
+      strcpy(json.valeurs[i], temp);
+      i = i + 1;
+      ptrtoken = strtok(NULL, delim);
+    }
+  }
+  return json;
 }
 
 void plot(char *data) 
@@ -88,7 +113,6 @@ int renvoie_message(int client_socket_fd, char *data) {
  */
 int recois_envoie_message(int socketfd) 
 {
-  JSON json;
   struct sockaddr_in client_addr;
   char data[1024];
 
@@ -107,19 +131,15 @@ int recois_envoie_message(int socketfd)
   //lecture de données envoyées par un client
   int data_size = read (client_socket_fd, data, sizeof(data));
   printf("Message recu : %s\n", data);
-  char delim[] = "\"";
-  if(data[0] == '{' && data[strlen(data) - 1] == '}') {
-    char *ptr = strtok(data, delim);
-    ptr = strtok(NULL, delim);
+  JSON json = JSONparse(data);
 
-    while(ptr != NULL) {
-      printf("%s\n", ptr);
-      ptr = strtok(NULL, delim);
-      ptr = strtok(NULL, delim);
-    }
+  JSONToString(json);
+
+  if (json.code == "calcul")
+  {
+    //renvois_numeros_calcule(client_socket_fd, json.valeurs);
   }
-
-  //JSONParse(json);
+  
 
   //fermer le socket 
   close(socketfd);

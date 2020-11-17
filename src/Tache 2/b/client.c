@@ -33,6 +33,8 @@ void JSONParse(JSON json)
   printf("}\n");
 }
 
+
+
 /* 
  * Fonction d'envoi et de réception de messages
  * Il faut un argument : l'identifiant de la socket
@@ -52,7 +54,7 @@ int envoie_recois_message(int socketfd)
   fgets(message, 1024, stdin);
   strcpy(data, "message: ");
   strcat(data, message);*/
-  char* json = "{code:\"calcul\",valeurs:[\"oui\",\"non\",\"10\"]}";
+  char* json = "{code:\"calcul\",valeurs:[\"oui\",\"non\",10,\"oui\"]}";
   
   int write_status = write(socketfd, json, strlen(json));
   if ( write_status < 0 ) 
