@@ -58,6 +58,28 @@ struct JSON JSONparse(char str[])
   return json;
 }
 
+int traite_calcul(JSON json){
+  int op1 = atoi(json.valeurs[1]);
+  int op2 = atoi(json.valeurs[2]);
+  if (strstr(json.valeurs[0], "+") != NULL)
+  {
+    return op1+op2;
+  }
+  else if (strstr(json.valeurs[0], "-") != NULL)
+  {
+    return op1-op2;
+  }
+  else if(strstr(json.valeurs[0], "*") != NULL)
+  {
+    return op1*op2;
+  }
+  else
+  {
+    return 0;
+  }
+  
+}
+
 void plot(char *data) 
 {
 
@@ -133,11 +155,17 @@ int recois_envoie_message(int socketfd)
   printf("Message recu : %s\n", data);
   JSON json = JSONparse(data);
 
+  printf("Parsing en JSON :\n");
   JSONToString(json);
+  printf("Message de type : %s\n", json.code);
 
-  if (json.code == "calcul")
+  if (strstr(json.code, "calcul") != NULL)
   {
-    //renvois_numeros_calcule(client_socket_fd, json.valeurs);
+    char result[1024];
+    int res = traite_calcul(json);
+    sprintf(result, "%d", res);
+    printf("Resultat : %s\n", result);
+    renvoie_message(client_socket_fd, result);
   }
   
 
