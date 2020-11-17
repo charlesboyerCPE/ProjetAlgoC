@@ -54,7 +54,11 @@ int envoie_recois_message(int socketfd)
   fgets(message, 1024, stdin);
   strcpy(data, "message: ");
   strcat(data, message);*/
-  char* json = "{code:\"calcul\",valeurs:[\"+\",\"15\",10]}";
+
+  //char* json = "{code:\"couleurs\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
+  char* json = "{code:\"balises\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
+  //char* json = "{code:\"calcul\",valeurs:[10,15]}";
+  //char* json = "{code:\"message\",valeurs:[\"Bonjour c'est un test"]}";
   
   int write_status = write(socketfd, json, strlen(json));
   if ( write_status < 0 ) 

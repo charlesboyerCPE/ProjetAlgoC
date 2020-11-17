@@ -80,6 +80,52 @@ int traite_calcul(JSON json){
   
 }
 
+int traite_couleurs(JSON json){
+  FILE *fichier;
+  fichier = fopen("couleurs.txt", "w");
+  if(fichier == NULL){
+    return -1;
+  }
+
+  if(fichier){
+    for(int i = 0; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0'){
+        char insert[50] = "";
+        strcpy(insert, json.valeurs[i]);
+        strcat(insert, "\n");
+        printf("ligne %i : %s", i, insert);
+        fputs(insert, fichier);
+      }
+    }
+  }
+  fclose(fichier);
+  return 0;
+}
+
+int traite_balises(JSON json){
+  FILE *fichier;
+  fichier = fopen("balises.txt", "w");
+  if(fichier == NULL){
+    return -1;
+  }
+
+  if(fichier){
+    for(int i = 0; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0'){
+        char insert[50] = "";
+        strcpy(insert, json.valeurs[i]);
+        strcat(insert, "\n");
+        printf("ligne %i : %s", i, insert);
+        fputs(insert, fichier);
+      }
+    }
+  }
+  fclose(fichier);
+  return 0;
+}
+
 void plot(char *data) 
 {
 
@@ -166,6 +212,34 @@ int recois_envoie_message(int socketfd)
     sprintf(result, "%d", res);
     printf("Resultat : %s\n", result);
     renvoie_message(client_socket_fd, result);
+  }
+  else if(strstr(json.code, "message") != NULL)
+  {
+    printf("Message recu : %s\n", json.valeurs[0]);
+    renvoie_message(client_socket_fd, json.valeurs[0]);
+  }
+  else if(strstr(json.code, "couleurs"))
+  {
+    int res = traite_couleurs(json);
+    if (res == -1)
+    {
+      renvoie_message(client_socket_fd, "Impossible d'ouvrir le fichier");
+    }
+    else if(res == 0)
+    {
+      renvoie_message(client_socket_fd, "Couleurs enregistrées");
+    }
+  }
+  else if(strstr(json.code, "balises")){
+    int res = traite_balises(json);
+    if(res == -1)
+    {
+      renvoie_message(client_socket_fd, "Impossible d'ouvrir les fichier");
+    }
+    else if(res == 0)
+    {
+      renvoie_message(client_socket_fd, "Balises enregistrées");
+    }
   }
   
 
