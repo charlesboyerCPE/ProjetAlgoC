@@ -35,6 +35,7 @@ void JSONToString(JSON json)
 
 struct JSON JSONparse(char str[])
 {
+  //Initialise une structure JSON
   struct JSON json = { "", { "" }};
   char delim[] = "\":,{[]}";
 
@@ -45,12 +46,13 @@ struct JSON JSONparse(char str[])
     char *ptrtoken = strtok(str, delim);
     ptrtoken = strtok(NULL, delim);
     char *code = strdup(ptrtoken);
-    strcpy(json.code, code);
+    strcpy(json.code, code); // copie la valeur prélevé dans la string dans le champ code
     ptrtoken = strtok(NULL, delim);
     ptrtoken = strtok(NULL, delim);
+
     while(ptrtoken != NULL) {
       char *temp = strdup(ptrtoken);
-      strcpy(json.valeurs[i], temp);
+      strcpy(json.valeurs[i], temp); // copie la valeur dans une case du tableau du champs valeurs
       i = i + 1;
       ptrtoken = strtok(NULL, delim);
     }
@@ -80,6 +82,7 @@ int traite_calcul(JSON json){
   
 }
 
+//TODO : factoriser le traitement des balises/couleur en une fonction
 int traite_couleurs(JSON json){
   FILE *fichier;
   fichier = fopen("couleurs.txt", "w");
