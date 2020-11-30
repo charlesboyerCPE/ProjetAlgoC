@@ -15,6 +15,7 @@
 
 #include "client.h"
 #include "bmp.h"
+#include "validateur.h"
 
 void JSONParse(JSON json)
 {
@@ -59,6 +60,7 @@ int envoie_recois_message(int socketfd)
   char messageType[100] = "";
   char message[100] = "";
   char json[1024];
+
   printf("Votre type de message ? (calcul, message, couleurs, balises) : ");
   fgets(messageType, 1024, stdin);
   strtok(messageType, "\n");
@@ -66,6 +68,9 @@ int envoie_recois_message(int socketfd)
   fgets(message, 1024, stdin);
   strtok(message, "\n");
   sprintf(json, "{code:\"%s\",valeurs:[%s]}", messageType, message);
+
+  //ON demande au validateur
+  validateur(json);
 
   //char* json = "{code:\"couleurs\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
   //char* json = "{code:\"balises\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";

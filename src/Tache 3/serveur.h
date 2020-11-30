@@ -26,6 +26,13 @@
  */
 #define STRING_LENGTH 256
 
+typedef struct JSON JSON;
+struct JSON
+{
+    char code[50];
+    char valeurs[NB_STRINGS][STRING_LENGTH];
+};
+
 /*!
  * \fn int recois_envoie_message(int socketfd)
  * \brief Fonction permettant l'envoi et la reception de message.
@@ -80,11 +87,6 @@ int traite_couleurs(JSON json);
  */
 int traite_balises(JSON json);
 
-typedef struct JSON JSON;
-struct JSON
-{
-    char code[50];
-    char valeurs[NB_STRINGS][STRING_LENGTH];
-};
+
 
 #endif

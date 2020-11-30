@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 #include "serveur.h"
+#include "validateur.h"
 
 void JSONToString(JSON json)
 {

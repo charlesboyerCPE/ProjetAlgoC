@@ -25,6 +25,13 @@
  */
 #define STRING_LENGTH 256
 
+typedef struct JSON JSON;
+struct JSON
+{
+    char code[50];
+    char valeurs[NB_STRINGS][STRING_LENGTH];
+};
+
 /*!
  * \fn int envoie_recois_message(int socketfd)
  * \brief Fonction permettant l'envoi et la reception de message
@@ -42,11 +49,6 @@ int envoie_recois_message(int socketfd);
  */
 void JSONParse(JSON json);
 
-typedef struct JSON JSON;
-struct JSON
-{
-    char code[50];
-    char valeurs[NB_STRINGS][STRING_LENGTH];
-};
+
 
 #endif
