@@ -65,7 +65,8 @@ int envoie_recois_message(int socketfd)
   printf("Votre message : ");
   fgets(message, 1024, stdin);
   strtok(message, "\n");
-  sprintf(json, "{code:\"%s\",valeurs:[%s]}", messageType, message);
+  sprintf(json, "{\"code\":\"%s\",\"valeurs\":[%s]}", messageType, message);
+  //printf("%s", json);
 
   //char* json = "{code:\"couleurs\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
   //char* json = "{code:\"balises\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";

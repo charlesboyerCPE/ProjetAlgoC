@@ -57,12 +57,20 @@ struct JSON JSONparse(char str[])
       ptrtoken = strtok(NULL, delim);
     }
   }
+  // Retourne une structure JSON
   return json;
 }
 
 int traite_calcul(JSON json){
   int op1 = atoi(json.valeurs[1]);
   int op2 = atoi(json.valeurs[2]);
+  char* arr[NB_STRINGS][STRING_LENGTH] = json.valeurs + 1;
+  for (int i = 0; i < NB_STRINGS; i++)
+  {
+    printf("%s", arr[i][0]);
+  }
+  
+  
   if (strstr(json.valeurs[0], "+") != NULL)
   {
     return op1+op2;
@@ -209,41 +217,43 @@ int recois_envoie_message(int socketfd)
   printf("Parsing en JSON :\n");
   JSONToString(json);
   printf("Message de type : %s\n", json.code);
+  
+  char result[1024];
 
   if (strstr(json.code, "calcul") != NULL)
   {
-    char result[1024];
     int res = traite_calcul(json);
-    sprintf(result, "%d", res);
+    sprintf(result, "{\"code\":\"calcul\",\"valeurs\":[%d]}", res);
     printf("Resultat : %s\n", result);
     renvoie_message(client_socket_fd, result);
   }
   else if(strstr(json.code, "message") != NULL)
   {
     printf("Message recu : %s\n", json.valeurs[0]);
-    renvoie_message(client_socket_fd, json.valeurs[0]);
+    sprintf(result, "{\"code\":\"calcul\",\"valeurs\":[\"%s\"]}", json.valeurs[0]);
+    renvoie_message(client_socket_fd, result);
   }
   else if(strstr(json.code, "couleurs"))
   {
     int res = traite_couleurs(json);
     if (res == -1)
     {
-      renvoie_message(client_socket_fd, "Impossible d'ouvrir le fichier");
+      renvoie_message(client_socket_fd, "{\"code\":\"calcul\",\"valeurs\":[\"Impossible d\'ouvrir le fichier\"]}");
     }
     else if(res == 0)
     {
-      renvoie_message(client_socket_fd, "Couleurs enregistrées");
+      renvoie_message(client_socket_fd, "{\"code\":\"calcul\",\"valeurs\":[\"Couleur.s enregistrée.s\"]}");
     }
   }
   else if(strstr(json.code, "balises")){
     int res = traite_balises(json);
     if(res == -1)
     {
-      renvoie_message(client_socket_fd, "Impossible d'ouvrir les fichier");
+      renvoie_message(client_socket_fd, "{\"code\":\"calcul\",\"valeurs\":[\"Impossible d\'ouvrir le fichier\"]}");
     }
     else if(res == 0)
     {
-      renvoie_message(client_socket_fd, "Balises enregistrées");
+      renvoie_message(client_socket_fd, "{\"code\":\"calcul\",\"valeurs\":[\"Balises enregistrés\"]}");
     }
   }
   
