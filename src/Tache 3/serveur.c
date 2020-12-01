@@ -218,6 +218,8 @@ int recois_envoie_message(int socketfd)
   JSONToString(json);
   printf("Message de type : %s\n", json.code);
 
+
+  //Gestion des retours au client
   char result[1024];
   if (strstr(json.code, "calcul") != NULL)
   {
@@ -228,7 +230,7 @@ int recois_envoie_message(int socketfd)
   }
   else if(strstr(json.code, "message") != NULL)
   {
-    sprintf(result, "{\"code\":\"message\",\"valeurs\":[%s]}", json.valeurs[0]);
+    sprintf(result, "{\"code\":\"message\",\"valeurs\":[\"%s\"]}", json.valeurs[0]);
     printf("Message recu : %s\n", json.valeurs[0]);
     renvoie_message(client_socket_fd, result);
   }

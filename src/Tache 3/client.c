@@ -67,7 +67,42 @@ int envoie_recois_message(int socketfd)
   printf("Votre message : ");
   fgets(message, 1024, stdin);
   strtok(message, "\n");
-  sprintf(json, "{\"code\":\"%s\",\"valeurs\":[%s]}", messageType, message);
+  printf("Message : %s\n", message);
+  
+  char *strToken;
+  char tmpString[256] = "";
+  char finalString[512] = "";
+  strToken = strtok(message, ",");
+  while (strToken != NULL)
+  {
+    //Si l'entrée n'est pas un nombre
+    if (atoi(strToken) == 0)
+    {
+      //Si la chaine de caractères a déjà des guillemets on n'en rajoute pas
+      if(strToken[0] == '\"' && strToken[strlen(strToken)-1] == '\"')
+      {
+        sprintf(tmpString, "%s,", strToken);
+      }
+      //en revanche si il n'y en a pas on en rajoute
+      else
+      {
+        sprintf(tmpString, "\"%s\",", strToken);
+      }
+    }
+    //Si c'est un nombre on ne touche à rien
+    else
+    {
+      sprintf(tmpString, "%s,", strToken);
+    }    
+    
+    strcat(finalString, tmpString);
+    strToken = strtok(NULL, ",");
+  }
+  finalString[strlen(finalString) - 1] = '\0';
+  printf("String : %s\n", finalString);
+  
+
+  sprintf(json, "{\"code\":\"%s\",\"valeurs\":[%s]}", messageType, finalString);
 
   //ON demande au validateur
   char code_dump[1024];
@@ -121,8 +156,6 @@ void analyse(char *pathname, char *data)
   int count;
   int nbCouleurs;
 
-  strcpy(data, "couleurs: ");
-
   //Demander à l'utilisateur le nombre de couleurs
   do
   {
@@ -159,7 +192,7 @@ void analyse(char *pathname, char *data)
     {
       sprintf(temp_string, "#%02x%02x%02x,", cc->cc.cc32[cc->size-count].c.rouge,cc->cc.cc32[cc->size-count].c.vert,cc->cc.cc32[cc->size-count].c.bleu);
     }
-    strcat(data, temp_string);
+    strcat(data, temp_string);;
   }
 
   //enlever le dernier virgule

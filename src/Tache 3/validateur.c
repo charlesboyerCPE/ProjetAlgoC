@@ -55,8 +55,6 @@ int validateur (char *json)
     strToken = strtok(json, delimiter);
     while (strToken != NULL)
     {
-        printf("strToken: %s\n", strToken);
-        
         //On teste pour savoir si c'est un nombre
         if (atoi(strToken) == 0)
         {
