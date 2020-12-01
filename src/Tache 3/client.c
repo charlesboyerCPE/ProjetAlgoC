@@ -45,16 +45,7 @@ int envoie_recois_message(int socketfd)
   // la réinitialisation de l'ensemble des données
   memset(data, 0, sizeof(data));
 
-
-  // Demandez à l'utilisateur d'entrer un message
-  /*char message[100];
-  printf("Votre message (max 1000 caracteres): ");
-  fgets(message, 1024, stdin);
-  strcpy(data, "message: ");
-  strcat(data, message);*/
-
-
-  /*
+ /*
   * Tests avec JSON en dur
   */
   char messageType[100] = "";
@@ -69,15 +60,17 @@ int envoie_recois_message(int socketfd)
   strtok(message, "\n");
   sprintf(json, "{\"code\":\"%s\",\"valeurs\":[%s]}", messageType, message);
 
-  //ON demande au validateur
+  //On demande au validateur
   char code_dump[1024];
   char valeurs_dump[1024];
+
   strcpy(code_dump, json);
   strcpy(valeurs_dump, json);
-  //Revoir cette partie (crash)
+
   if(validateur(code_dump) == 0 && verifierCode(valeurs_dump) == 0)
   { 
     printf("Message envoyé : %s\n", json);
+
     int write_status = write(socketfd, json, strlen(json));
     if ( write_status < 0 ) 
     {
@@ -87,7 +80,7 @@ int envoie_recois_message(int socketfd)
   }
   else
   {
-    printf("non\n");
+    printf("JSON non envoyé\n");
     return -1;
   }
   
@@ -121,8 +114,6 @@ void analyse(char *pathname, char *data)
   int count;
   int nbCouleurs;
 
-  strcpy(data, "couleurs: ");
-
   //Demander à l'utilisateur le nombre de couleurs
   do
   {
@@ -140,7 +131,7 @@ void analyse(char *pathname, char *data)
   
   //Ajouter le nombre de couleur désiré
   char temp_string[nbCouleurs];
-  sprintf(temp_string, "%d, ", nbCouleurs);
+  sprintf(temp_string, "%d,", nbCouleurs);
   
   if (cc->size < nbCouleurs) 
   {
@@ -153,11 +144,11 @@ void analyse(char *pathname, char *data)
   {
     if(cc->compte_bit ==  BITS32) 
     {
-      sprintf(temp_string, "#%02x%02x%02x,", cc->cc.cc24[cc->size-count].c.rouge,cc->cc.cc32[cc->size-count].c.vert,cc->cc.cc32[cc->size-count].c.bleu);
+      sprintf(temp_string, "\"#%02x%02x%02x\",", cc->cc.cc24[cc->size-count].c.rouge,cc->cc.cc32[cc->size-count].c.vert,cc->cc.cc32[cc->size-count].c.bleu);
     }
     if(cc->compte_bit ==  BITS24) 
     {
-      sprintf(temp_string, "#%02x%02x%02x,", cc->cc.cc32[cc->size-count].c.rouge,cc->cc.cc32[cc->size-count].c.vert,cc->cc.cc32[cc->size-count].c.bleu);
+      sprintf(temp_string, "\"#%02x%02x%02x\",", cc->cc.cc32[cc->size-count].c.rouge,cc->cc.cc32[cc->size-count].c.vert,cc->cc.cc32[cc->size-count].c.bleu);
     }
     strcat(data, temp_string);
   }
@@ -169,10 +160,16 @@ void analyse(char *pathname, char *data)
 int envoie_couleurs(int socketfd, char *pathname) 
 {
   char data[1024];
+  char *json;
+
   memset(data, 0, sizeof(data));
   analyse(pathname, data);
   
-  int write_status = write(socketfd, data, strlen(data));
+
+  sprintf(json, "{\"code\":\"couleurs\",\"valeurs\":[%s]}", data);
+  printf("JSON: %s", json);
+
+  int write_status = write(socketfd, json, sizeof(data));
   if ( write_status < 0 ) 
   {
     perror("erreur ecriture");
@@ -211,9 +208,9 @@ int main(int argc, char **argv)
     perror("connection serveur");
     exit(EXIT_FAILURE);
   }
-  //envoie_couleurs(socketfd, argv[1]);
+  envoie_couleurs(socketfd, argv[1]);
 
-  envoie_recois_message(socketfd);
+  //envoie_recois_message(socketfd);
 
   close(socketfd);
 

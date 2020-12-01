@@ -15,7 +15,9 @@
 int verifierCode (char *json)
 {
     char delim[] = "\":,{[]}";
+
     char *code = strtok(json, delim);
+
     code = strtok(NULL, delim);
     printf("code : %s\n", code);
     if (strstr(code, "calcul"))
@@ -54,22 +56,16 @@ int validateur (char *json)
     //On parcours la chaine de caractère en supprimant les éléments inutiles
     strToken = strtok(json, delimiter);
     while (strToken != NULL)
-    {
-        printf("strToken: %s\n", strToken);
-        
+    {       
         //On teste pour savoir si c'est un nombre
         if (atoi(strToken) == 0)
         {
             //Si ce n'est pas un nombre, on regarde si il y a des guillemets
-            if(strToken[0] == '\"' && strToken[strlen(strToken)-1] == '\"')
-            {
-                printf("JSON valide\n");
-            }
-            else
+            if(strToken[0] != '\"' && strToken[strlen(strToken)-1] != '\"')
             {
                 printf("JSON Non valide\n");
                 return -1;
-            }           
+            }  
         }
         else
         {
@@ -78,11 +74,7 @@ int validateur (char *json)
             {
                 printf("JSON Non valide\n");
                 return -1;
-            }
-            else
-            {
-                printf("JSON valide\n");
-            }   
+            } 
         }
         
         //On prend le token suivant
