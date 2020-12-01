@@ -12,12 +12,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int verifierCode (char *json)
+{
+    char delim[] = "\":,{[]}";
+    char *code = strtok(json, delim);
+    code = strtok(NULL, delim);
+    printf("code : %s\n", code);
+    if (strstr(code, "calcul"))
+    {
+        return 0;
+    }
+    else if (strstr(code, "message"))
+    {
+        return 0;
+    }
+    else if (strstr(code, "nom"))
+    {
+        return 0;
+    }
+    else if (strstr(code, "couleurs"))
+    {
+        return 0;
+    }
+    else if (strstr(code, "balises"))
+    {
+        return 0;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 int validateur (char *json)
 {
     char *cpyJSON;
     char *delimiter = "[]{},:";
     char *strToken;
-
     printf("JSON: %s\n", json);
     
     //On parcours la chaine de caractère en supprimant les éléments inutiles
@@ -58,35 +89,5 @@ int validateur (char *json)
         strToken = strtok(NULL, delimiter);
     }
     
-    return 0;
-}
-
-int verifierMessage (char *json)
-{
-
-    return 0;
-}
-
-int verifierNom (char *json)
-{
-    
-    return 0;
-}
-
-int verifierCalcul (char *json)
-{
-
-    return 0;
-}
-
-int verifierCouleurs (char *json)
-{
-
-    return 0;
-}
-
-int verifierBalises (char *json)
-{
-
     return 0;
 }

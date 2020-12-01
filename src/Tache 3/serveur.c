@@ -25,7 +25,14 @@ void JSONToString(JSON json)
   for(int i = 0; i < NB_STRINGS; i++){
     if (json.valeurs[i] && json.valeurs[i][0] != '\0')
     {
-      printf("\"%s\"", json.valeurs[i]);
+      if (atoi(json.valeurs[i]) != 0)
+      {
+        printf("%s", json.valeurs[i]);
+      }
+      else
+      {
+        printf("\"%s\"", json.valeurs[i]);
+      }
       if (i+1 < NB_STRINGS && json.valeurs[i+1][0] != '\0')
         printf(",");
     }
@@ -211,40 +218,41 @@ int recois_envoie_message(int socketfd)
   JSONToString(json);
   printf("Message de type : %s\n", json.code);
 
+  char result[1024];
   if (strstr(json.code, "calcul") != NULL)
   {
-    char result[1024];
     int res = traite_calcul(json);
-    sprintf(result, "%d", res);
+    sprintf(result, "{\"code\":\"calcul\",\"valeurs\":[%d]}", res);
     printf("Resultat : %s\n", result);
     renvoie_message(client_socket_fd, result);
   }
   else if(strstr(json.code, "message") != NULL)
   {
+    sprintf(result, "{\"code\":\"message\",\"valeurs\":[%s]}", json.valeurs[0]);
     printf("Message recu : %s\n", json.valeurs[0]);
-    renvoie_message(client_socket_fd, json.valeurs[0]);
+    renvoie_message(client_socket_fd, result);
   }
   else if(strstr(json.code, "couleurs"))
   {
     int res = traite_couleurs(json);
     if (res == -1)
     {
-      renvoie_message(client_socket_fd, "Impossible d'ouvrir le fichier");
+      renvoie_message(client_socket_fd, "{\"code\":\"couleurs\",\"valeurs\":[\"Impossible d\'ouvrir le fichier\"]}");
     }
     else if(res == 0)
     {
-      renvoie_message(client_socket_fd, "Couleurs enregistrées");
+      renvoie_message(client_socket_fd, "{\"code\":\"couleurs\",\"valeurs\":[\"Couleurs enregistrées\"]}");
     }
   }
   else if(strstr(json.code, "balises")){
     int res = traite_balises(json);
     if(res == -1)
     {
-      renvoie_message(client_socket_fd, "Impossible d'ouvrir les fichier");
+      renvoie_message(client_socket_fd, "{\"code\":\"balises\",\"valeurs\":[\"Impossible d\'ouvrir le fichier\"]}");
     }
     else if(res == 0)
     {
-      renvoie_message(client_socket_fd, "Balises enregistrées");
+      renvoie_message(client_socket_fd, "{\"code\":\"balises\",\"valeurs\":[\"Balises enregistrées\"]}");
     }
   }
   

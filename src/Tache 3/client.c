@@ -67,22 +67,34 @@ int envoie_recois_message(int socketfd)
   printf("Votre message : ");
   fgets(message, 1024, stdin);
   strtok(message, "\n");
-  sprintf(json, "{code:\"%s\",valeurs:[%s]}", messageType, message);
+  sprintf(json, "{\"code\":\"%s\",\"valeurs\":[%s]}", messageType, message);
 
   //ON demande au validateur
-  validateur(json);
-
+  char code_dump[1024];
+  char valeurs_dump[1024];
+  strcpy(code_dump, json);
+  strcpy(valeurs_dump, json);
+  //Revoir cette partie (crash)
+  if(validateur(code_dump) == 0 && verifierCode(valeurs_dump) == 0)
+  { 
+    printf("Message envoyé : %s\n", json);
+    int write_status = write(socketfd, json, strlen(json));
+    if ( write_status < 0 ) 
+    {
+      perror("erreur ecriture");
+      exit(EXIT_FAILURE);
+    }
+  }
+  else
+  {
+    printf("non\n");
+    return -1;
+  }
+  
   //char* json = "{code:\"couleurs\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
   //char* json = "{code:\"balises\",valeurs:[\"#FFFFFF\",\"#000000\",\"#111111\"]}";
   //char* json = "{code:\"calcul\",valeurs:[10,15]}";
   //char* json = "{code:\"message\",valeurs:[\"Bonjour c'est un test"]}";
-  
-  int write_status = write(socketfd, json, strlen(json));
-  if ( write_status < 0 ) 
-  {
-    perror("erreur ecriture");
-    exit(EXIT_FAILURE);
-  }
 
   // la réinitialisation de l'ensemble des données
   memset(json, 0, sizeof(json));
