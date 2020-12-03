@@ -68,9 +68,11 @@ struct JSON JSONparse(char str[])
   return json;
 }
 
-int traite_calcul(JSON json){
+int traite_calcul(JSON json)
+{
   int op1 = atoi(json.valeurs[1]);
   int op2 = atoi(json.valeurs[2]);
+
   if (strstr(json.valeurs[0], "+") != NULL)
   {
     return op1+op2;
@@ -90,11 +92,11 @@ int traite_calcul(JSON json){
   
 }
 
-//TODO : factoriser le traitement des balises/couleur en une fonction
 int traite_couleurs(JSON json){
   FILE *fichier;
   fichier = fopen("couleurs.txt", "w");
-  if(fichier == NULL){
+  if(fichier == NULL)
+  {
     return -1;
   }
 
@@ -221,22 +223,27 @@ int recois_envoie_message(int socketfd)
 
   //Gestion des retours au client
   char result[1024];
+
   if (strstr(json.code, "calcul") != NULL)
   {
     int res = traite_calcul(json);
+
     sprintf(result, "{\"code\":\"calcul\",\"valeurs\":[%d]}", res);
     printf("Resultat : %s\n", result);
     renvoie_message(client_socket_fd, result);
   }
+  
   else if(strstr(json.code, "message") != NULL)
   {
     sprintf(result, "{\"code\":\"message\",\"valeurs\":[\"%s\"]}", json.valeurs[0]);
     printf("Message recu : %s\n", json.valeurs[0]);
     renvoie_message(client_socket_fd, result);
   }
+
   else if(strstr(json.code, "couleurs"))
   {
     int res = traite_couleurs(json);
+
     if (res == -1)
     {
       renvoie_message(client_socket_fd, "{\"code\":\"couleurs\",\"valeurs\":[\"Impossible d\'ouvrir le fichier\"]}");
@@ -246,7 +253,9 @@ int recois_envoie_message(int socketfd)
       renvoie_message(client_socket_fd, "{\"code\":\"couleurs\",\"valeurs\":[\"Couleurs enregistrées\"]}");
     }
   }
-  else if(strstr(json.code, "balises")){
+
+  else if(strstr(json.code, "balises"))
+  {
     int res = traite_balises(json);
     if(res == -1)
     {
@@ -301,7 +310,7 @@ int main()
   // Écouter les messages envoyés par le client
   listen(socketfd, 10);
 
-  //Lire et répondre au client
+  // Lire et répondre au client
   recois_envoie_message(socketfd);
 
   return 0;
