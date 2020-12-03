@@ -67,7 +67,7 @@ struct JSON JSONparse(char str[]);
  * 
  * \return 0 si tout s'est bien passer
  */
-int traite_calcul(JSON json);
+float traite_calcul(JSON json);
 
 /*!
  * \fn int traite_couleurs(JSON json)

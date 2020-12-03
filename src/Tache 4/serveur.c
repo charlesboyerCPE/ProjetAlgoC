@@ -69,25 +69,55 @@ struct JSON JSONparse(char str[])
   return json;
 }
 
-int traite_calcul(JSON json){
+float traite_calcul(JSON json){
   int op1 = atoi(json.valeurs[1]);
   int op2 = atoi(json.valeurs[2]);
   if (strstr(json.valeurs[0], "+") != NULL)
   {
-    return op1+op2;
+    float sum = 0;
+    float nb = 0;
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        nb = atoi(json.valeurs[i]);
+        sum += nb;
+      }
+    }
+    return sum;
   }
   else if (strstr(json.valeurs[0], "-") != NULL)
   {
-    return op1-op2;
+    float sus = 0;
+    float nb = 0;
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        nb = atoi(json.valeurs[i]);
+        sus -= nb;
+      }
+    }
+    return sus;
   }
   else if(strstr(json.valeurs[0], "*") != NULL)
   {
-    return op1*op2;
+    float produit = atoi(json.valeurs[1]);
+    float nb = 0;
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        nb = atoi(json.valeurs[i]);
+        produit *= nb;
+      }
+    }
+    return produit;
   }
   else if (strstr(json.valeurs[0], "minimum") != NULL)
   {
-    int min = atoi(json.valeurs[1]);
-    int nb = 0;
+    float min = atoi(json.valeurs[1]);
+    float nb = 0;
     for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
     {
       if(json.valeurs[i][0] != '\0')
@@ -103,8 +133,8 @@ int traite_calcul(JSON json){
   }
   else if (strstr(json.valeurs[0], "maximum") != NULL)
   {
-    int max = atoi(json.valeurs[1]);
-    int nb = 0;
+    float max = atoi(json.valeurs[1]);
+    float nb = 0;
     for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
     {
       if(json.valeurs[i][0] != '\0')
@@ -122,7 +152,7 @@ int traite_calcul(JSON json){
   {
     float moyenne = 0;
     float somme = 0;
-    int nb = 0;
+    float nb = 0;
     for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
     {
       if(json.valeurs[i][0] != '\0')
@@ -139,7 +169,7 @@ int traite_calcul(JSON json){
     float moyenne = 0;
     float somme = 0;
     float ecart = 0;
-    int nb = 0;
+    float nb = 0;
     for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
     {
       if(json.valeurs[i][0] != '\0')
@@ -152,7 +182,7 @@ int traite_calcul(JSON json){
     for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
     {
       if(json.valeurs[i][0] != '\0') {
-        int nb = atoi(json.valeurs[i]);
+        float nb = atoi(json.valeurs[i]);
         somme = somme + pow(nb - moyenne,2);
         ecart = sqrt(somme/i);
       }
