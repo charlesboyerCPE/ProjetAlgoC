@@ -13,8 +13,207 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "serveur.h"
+#include "validateur.h"
+
+void JSONToString(JSON json)
+{
+  printf("{\n");
+  printf("\t\"code\":\"%s\",\n", json.code);
+  printf("\t\"valeurs\": [ ");
+  for(int i = 0; i < NB_STRINGS; i++){
+    if (json.valeurs[i] && json.valeurs[i][0] != '\0')
+    {
+      if (atoi(json.valeurs[i]) != 0)
+      {
+        printf("%s", json.valeurs[i]);
+      }
+      else
+      {
+        printf("\"%s\"", json.valeurs[i]);
+      }
+      if (i+1 < NB_STRINGS && json.valeurs[i+1][0] != '\0')
+        printf(",");
+    }
+  } 
+  printf("]\n");
+  printf("}\n");
+}
+
+struct JSON JSONparse(char str[])
+{
+  //Initialise une structure JSON
+  struct JSON json = { "", { "" }};
+  char delim[] = "\":,{[]}";
+
+  if(str[0] == '{' && str[strlen(str) - 1] == '}') {
+    char valeurs[NB_STRINGS][STRING_LENGTH];
+    int i = 0;
+
+    char *ptrtoken = strtok(str, delim);
+    ptrtoken = strtok(NULL, delim);
+    char *code = strdup(ptrtoken);
+    strcpy(json.code, code); // copie la valeur prélevé dans la string dans le champ code
+    ptrtoken = strtok(NULL, delim);
+    ptrtoken = strtok(NULL, delim);
+
+    while(ptrtoken != NULL) {
+      char *temp = strdup(ptrtoken);
+      strcpy(json.valeurs[i], temp); // copie la valeur dans une case du tableau du champs valeurs
+      i = i + 1;
+      ptrtoken = strtok(NULL, delim);
+    }
+  }
+  return json;
+}
+
+int traite_calcul(JSON json){
+  int op1 = atoi(json.valeurs[1]);
+  int op2 = atoi(json.valeurs[2]);
+  if (strstr(json.valeurs[0], "+") != NULL)
+  {
+    return op1+op2;
+  }
+  else if (strstr(json.valeurs[0], "-") != NULL)
+  {
+    return op1-op2;
+  }
+  else if(strstr(json.valeurs[0], "*") != NULL)
+  {
+    return op1*op2;
+  }
+  else if (strstr(json.valeurs[0], "minimum") != NULL)
+  {
+    int min = atoi(json.valeurs[1]);
+    int nb = 0;
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        nb = atoi(json.valeurs[i]);
+        if(min > nb)
+        {
+          min = nb;
+        }
+      }
+    }
+    return min;  
+  }
+  else if (strstr(json.valeurs[0], "maximum") != NULL)
+  {
+    int max = atoi(json.valeurs[1]);
+    int nb = 0;
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        nb = atoi(json.valeurs[i]);
+        if(max < nb)
+        {
+          max = nb;
+        }
+      }
+    }
+    return max;  
+  }
+  else if (strstr(json.valeurs[0], "moyenne") != NULL)
+  {
+    float moyenne = 0;
+    float somme = 0;
+    int nb = 0;
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        nb = atoi(json.valeurs[i]);
+        somme = somme + nb;
+        moyenne = somme / i;
+      }
+    }
+    return moyenne;
+  }
+  else if (strstr(json.valeurs[0], "ecarttype") != NULL)
+  {
+    float moyenne = 0;
+    float somme = 0;
+    float ecart = 0;
+    int nb = 0;
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        nb = atoi(json.valeurs[i]);
+        somme = somme + nb;
+        moyenne = somme / i;
+      }
+    }
+    for (int i = 1; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0') {
+        int nb = atoi(json.valeurs[i]);
+        somme = somme + pow(nb - moyenne,2);
+        ecart = sqrt(somme/i);
+      }
+    }
+    return ecart;
+  }
+  else
+  {
+    return -1;
+  }
+  
+}
+
+//TODO : factoriser le traitement des balises/couleur en une fonction
+int traite_couleurs(JSON json){
+  FILE *fichier;
+  fichier = fopen("couleurs.txt", "w");
+  if(fichier == NULL){
+    return -1;
+  }
+
+  if(fichier){
+    for(int i = 0; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0'){
+        char insert[50] = "";
+        strcpy(insert, json.valeurs[i]);
+        strcat(insert, "\n");
+        printf("ligne %i : %s", i, insert);
+        fputs(insert, fichier);
+      }
+    }
+  }
+  fclose(fichier);
+  return 0;
+}
+
+int traite_balises(JSON json){
+  FILE *fichier;
+  fichier = fopen("balises.txt", "w");
+  if(fichier == NULL){
+    return -1;
+  }
+
+  if(fichier)
+  {
+    for(int i = 0; i < sizeof(json.valeurs) / sizeof(json.valeurs[0]); i++)
+    {
+      if(json.valeurs[i][0] != '\0')
+      {
+        char insert[50] = "";
+        strcpy(insert, json.valeurs[i]);
+        strcat(insert, "\n");
+        printf("ligne %i : %s", i, insert);
+        fputs(insert, fichier);
+      }
+    }
+  }
+  fclose(fichier);
+  return 0;
+}
 
 void plot(char *data) 
 {
@@ -87,69 +286,56 @@ int recois_envoie_message(int socketfd)
   memset(data, 0, sizeof(data));
 
   //lecture de données envoyées par un client
-  int data_size = read (client_socket_fd, (void *) data, sizeof(data));
-      
-  if (data_size < 0) {
-    perror("erreur lecture");
-    return(EXIT_FAILURE);
-  }
-  
-  /*
-   * extraire le code des données envoyées par le client. 
-   * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
-   */
-  printf ("Message recu: %s\n", data);
-  char code[10];
-  sscanf(data, "%s", code);
+  int data_size = read (client_socket_fd, data, sizeof(data));
+  printf("Message recu : %s\n", data);
+  JSON json = JSONparse(data);
 
-  //Si le message commence par le mot: 'message:' 
-  recois_numeros_calcule(client_socket_fd, data);
+  printf("Parsing en JSON :\n");
+  JSONToString(json);
+  printf("Message de type : %s\n", json.code);
+
+
+  //Gestion des retours au client
+  char result[1024];
+  if (strstr(json.code, "calcul") != NULL)
+  {
+    int res = traite_calcul(json);
+    sprintf(result, "{\"code\":\"calcul\",\"valeurs\":[%d]}", res);
+    printf("Resultat : %s\n", result);
+    renvoie_message(client_socket_fd, result);
+  }
+  else if(strstr(json.code, "message") != NULL)
+  {
+    sprintf(result, "{\"code\":\"message\",\"valeurs\":[\"%s\"]}", json.valeurs[0]);
+    printf("Message recu : %s\n", json.valeurs[0]);
+    renvoie_message(client_socket_fd, result);
+  }
+  else if(strstr(json.code, "couleurs"))
+  {
+    int res = traite_couleurs(json);
+    if (res == -1)
+    {
+      renvoie_message(client_socket_fd, "{\"code\":\"couleurs\",\"valeurs\":[\"Impossible d\'ouvrir le fichier\"]}");
+    }
+    else if(res == 0)
+    {
+      renvoie_message(client_socket_fd, "{\"code\":\"couleurs\",\"valeurs\":[\"Couleurs enregistrées\"]}");
+    }
+  }
+  else if(strstr(json.code, "balises")){
+    int res = traite_balises(json);
+    if(res == -1)
+    {
+      renvoie_message(client_socket_fd, "{\"code\":\"balises\",\"valeurs\":[\"Impossible d\'ouvrir le fichier\"]}");
+    }
+    else if(res == 0)
+    {
+      renvoie_message(client_socket_fd, "{\"code\":\"balises\",\"valeurs\":[\"Balises enregistrées\"]}");
+    }
+  }
 
   //fermer le socket 
   close(socketfd);
-}
-
-int recois_numeros_calcule(int client_socket_fd, char *data)
-{
-  /*
-   * extraire le code des données envoyées par le client. 
-   * Les données envoyées par le client peuvent commencer par le mot "message :" ou un autre mot.
-   */
-  int op1;
-  int op2;
-  char response[100] = "calcul : ";
-  char buffer[100];
-  if (2 == sscanf(data, "%*[^0-9]%d%*[^0-9]%d", &op1, &op2))
-  {
-    if (strchr(data, '+') != NULL)
-    {
-      sprintf(buffer, "%i", (op1+op2));
-    }
-    else if (strchr(data, '-') != NULL)
-    {
-      sprintf(buffer, "%i", (op1-op2));
-    }
-    else if (strchr(data, '*') != NULL)
-    {
-      sprintf(buffer, "%i", (op1*op2));
-    }
-    else if(strchr(data, "moyenne") != NULL)
-    {
-      sprintf(buffer, "%i", (op1*op2));
-    }
-    else
-    {
-      sprintf(buffer, "Pas d'oparateur valable");
-    }
-    strcat(response, buffer);
-  }
-  renvoie_message(client_socket_fd, response);
-  
-  printf ("Message recu: %s\n", data);
-  char code[10];
-  sscanf(data, "%s", code);
-
-  return 0;
 }
 
 int main() 

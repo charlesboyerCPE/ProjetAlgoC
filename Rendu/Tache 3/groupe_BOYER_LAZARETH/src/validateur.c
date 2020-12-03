@@ -14,6 +14,7 @@
 
 int verifierCode (char *json)
 {
+    //On prélève le code dans le JSON
     char delim[] = "\":,{[]}";
     char *code = strtok(json, delim);
     code = strtok(NULL, delim);
@@ -40,6 +41,7 @@ int verifierCode (char *json)
     }
     else
     {
+        //Si ce n'est pas un code connu il y a une erreur
         return -1;
     }
 }

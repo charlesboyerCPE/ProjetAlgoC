@@ -45,18 +45,6 @@ int envoie_recois_message(int socketfd)
   // la réinitialisation de l'ensemble des données
   memset(data, 0, sizeof(data));
 
-
-  // Demandez à l'utilisateur d'entrer un message
-  /*char message[100];
-  printf("Votre message (max 1000 caracteres): ");
-  fgets(message, 1024, stdin);
-  strcpy(data, "message: ");
-  strcat(data, message);*/
-
-
-  /*
-  * Tests avec JSON en dur
-  */
   char messageType[100] = "";
   char message[100] = "";
   char json[1024];
@@ -69,6 +57,7 @@ int envoie_recois_message(int socketfd)
   strtok(message, "\n");
   printf("Message : %s\n", message);
   
+  //Algorithme servant à traiter les entrées utilisateurs
   char *strToken;
   char tmpString[256] = "";
   char finalString[512] = "";

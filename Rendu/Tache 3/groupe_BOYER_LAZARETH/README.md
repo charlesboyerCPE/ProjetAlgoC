@@ -3,7 +3,8 @@
 ## Objectif
 
 L'objectif du projet est de créer un environnement client-serveur pour l'analyse et la gestion desimages et de leurs métadonnées. Cependant, contrairement aux applications client-serveurtraditionnelles, nous n'enverrons pas les images au serveur pour analyse, mais nous effectuerons une analyse d'image côté client et enverrons des rapports de synthèse au serveur.
-Pour cette troisième tache l'objectif est de mettre en place un validateur qui va valider notre protocole.
+
+Pour cette troisième tâche, notre a objectif a été de créer un validateur. Ce dernier vérifie le JSON, notammant si la synthaxe est bien respecté.
 
 ## Fichiers
 
@@ -16,6 +17,8 @@ Pour cette troisième tache l'objectif est de mettre en place un validateur qui 
   - serveur.h
   - couleur.c
   - couleur.h
+  - validateur.c
+  - validateur.h
 - CONTRIBUTORS.md
 - INSTALL.md
 - MakeFile
@@ -39,8 +42,11 @@ Pour cette troisième tache l'objectif est de mettre en place un validateur qui 
 
 ## Difficultés
 
-Le traitement de chaînes de caractères en C est un peu compliqué. Nous avons mis en place des algorithmes de traitement de chaînes de caractère pour palier cette difficulté (strtok). Baptiste est un habitué des langages de hauts niveaux et le traitement des chaînes de caractères en C lui semble un peu barbare.
-Difficulté : Elevé.
+Le validateur a mit de temps, notammant parce que nous voulions faire quelques choses d'assez générale.
+J'entend par là que si nous voulons, prochainement, rajouter différents types de message, ils seront
+pris en compte.
+Difficulté: Moyen
+
 
 ## Informations importantes
 Pour utiliser la fonction "couleur" il vous faut décommenter la fonction "envoie_couleurs" dans client.c et mettre "envoie_recois_message" en commentaire.
