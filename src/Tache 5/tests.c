@@ -13,60 +13,50 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include "tests.h"
+#include "client.h"
 #include "bmp.h"
 #include "validateur.h"
 
-void JSONParse(JSON json)
-{
-  printf("{\n");
-  printf("\t\"code\":\"%s\",\n", json.code);
-  printf("\t\"valeurs\": [ ");
-  for(int i = 0; i < NB_STRINGS; i++){
-    if (json.valeurs[i] && json.valeurs[i][0] != '\0')
-    {
-      printf("\"%s\"", json.valeurs[i]);
-      if (i+1 < NB_STRINGS && json.valeurs[i+1][0] != '\0')
-        printf(",");
-    }
-  } 
-  printf("]\n");
-  printf("}\n");
+void test_message_valide(){
+
 }
 
+
 /* 
- * Fonction d'envoie des tests
- * 
+ * Fonction d'envoi et de réception de messages
+ * Il faut un argument : l'identifiant de la socket
  */
-int envoie_recois_tests(int socketfd) 
+int envoie_recois_message(int socketfd) 
 {
+
   char data[1024];
   // la réinitialisation de l'ensemble des données
   memset(data, 0, sizeof(data));
   //TEST 1 - Test message
   printf("====================================================\n");
   printf("TEST 1 - Message entrée valide\n");
-  char *json = "{code:\"message\",valeurs:[\"Test-1\"]}";
-  printf("Message envoyé : %s\n", json);
+  char *json = "{\"code\":\"message\",\"valeurs\":[\"Test-1\"]}";
   int write_status = write(socketfd, json, strlen(json));
   if ( write_status < 0 ) 
   {
     perror("erreur ecriture");
     exit(EXIT_FAILURE);
   }
-  // la réinitialisation de l'ensemble des données
-  memset(json, 0, sizeof(json));
-
-
-  // lire les données de la socket
   int read_status = read(socketfd, data, sizeof(data));
   if ( read_status < 0 ) 
   {
     perror("erreur lecture");
     return -1;
   }
-
-  printf("Message recu: %s\n", data);
+  if (strcmp(data,json) == 0)
+  {
+    printf("ETAT:OK\n");
+  }
+  else
+  {
+    printf("ETAT:NOK\n");
+  }
+  printf("====================================================\n");
   
 
   /*
@@ -207,7 +197,7 @@ int main(int argc, char **argv)
   }
   //envoie_couleurs(socketfd, argv[1]);
 
-  envoie_recois_tests(socketfd);
+  envoie_recois_message(socketfd);
 
   close(socketfd);
 

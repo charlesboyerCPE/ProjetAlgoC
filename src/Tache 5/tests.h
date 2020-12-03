@@ -1,81 +1,54 @@
-/*
- * SPDX-FileCopyrightText: 2020 John Samuel
- *
- * SPDX-License-Identifier: GPL-3.0-or-later
- *
+/*!
+ * \file client.h
+ * \brief Fichier contenant les prototypes des fonctions
+ *      du programme client
+ * \author John Samuel
+ * \copyright 2020 John Samuel GPL-3.0-or-later
+ * \version 1.0
+ * \date 2020
  */
+#ifndef __TESTS_H__
+#define __TESTS_H__
 
-#ifndef __COLOR_H__
-#define __COLOR_H__
+/*!
+ * \def PORT 8089
+ */
+#define PORT 8089
 
-#include <stdint.h>
+/*!
+ * \def NB_STRINGS 30
+ */
+#define NB_STRINGS 30
 
-// Compte de bits (24 bits, 32 bits..)
-typedef enum COMPTEBIT {BITS24, BITS32} COMPTEBIT; 
+/*!
+ * \def STRING_LENGTH 256
+ */
+#define STRING_LENGTH 256
 
-// Structure de données d'une couleur de 32 bits
-#pragma pack(push, 1)
-typedef struct {
-  uint8_t bleu;
-  uint8_t vert;
-  uint8_t rouge;
-  uint8_t alpha;
-} couleur32;
-#pragma pack(pop)
+typedef struct JSON JSON;
+struct JSON
+{
+    char code[50];
+    char valeurs[NB_STRINGS][STRING_LENGTH];
+};
 
-// Structure de données d'une couleur de 24 bits
-#pragma pack(push, 1)
-typedef struct {
-  uint8_t bleu;
-  uint8_t vert;
-  uint8_t rouge;
-} couleur24;
-#pragma pack(pop)
+/*!
+ * \fn int envoie_recois_message(int socketfd)
+ * \brief Fonction permettant l'envoi et la reception de message
+ * \param [in] socketFd: l'identifiant de la socket de dialogue avec le serveur
+ * \return 0 si tout a bien fonctionner, -1 si il y a eu une erreur
+ */
+int envoie_recois_message(int socketfd);
 
-// Structure de données d'un couleurs de 24/32 bits
-typedef struct {
-  COMPTEBIT compte_bit; 
-  union {
-    couleur24 *c24;
-    couleur32 *c32;
-  } c;
-  int size;
-} couleur;
+/*!
+ * \fn struct JSON JSONparse(char str[])
+ * \brief Fonction permettant de parser le JSON
+ * \param [in] str: le buffer contenant le json sous forme de chaine de caractère
+ * 
+ * \return Le JSON
+ */
+void JSONParse(JSON json);
 
-// Structure de données de compteur de couleurs de 32 bits
-typedef struct {
-  couleur32 c;
-  int compte;
-}
-couleur32_compteur;
 
-// Structure de données de compteur de couleurs de 24 bits
-typedef struct {
-  couleur24 c;
-  int compte;
-}
-couleur24_compteur;
-
-// Structure de données de compteur de couleurs de 24/32 bits
-typedef struct {
-  COMPTEBIT compte_bit; 
-  union {
-    couleur24_compteur *cc24;
-    couleur32_compteur *cc32;
-  } cc;
-  int size;
-} couleur_compteur;
-
-//compter les couleurs distincts 
-couleur_compteur* compte_couleur(couleur *, int);
-
-//afficher les couleurs
-void print_couleur(couleur *, int);
-
-//afficher le compte de couleurs distincts
-void print_couleur_compteur(couleur_compteur *);
-
-//trier le compte de couleurs distincts
-void trier_couleur_compteur(couleur_compteur *);
 
 #endif
