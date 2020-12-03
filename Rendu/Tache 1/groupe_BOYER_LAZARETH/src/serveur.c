@@ -288,7 +288,7 @@ int main()
 
   //Lire et répondre au client
   //recois_envoie_message(socketfd);
-  recois_balises(socketfd);
+  //recois_balises(socketfd);
 
   return 0;
 }
